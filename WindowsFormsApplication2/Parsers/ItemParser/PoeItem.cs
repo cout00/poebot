@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using WindowsFormsApplication2.Parsers.ItemParser.ItemBuilder;
 
 namespace WindowsFormsApplication2.Parsers.ItemParser {
     public class PoeItem : PoeBaseItem {
@@ -10,10 +11,10 @@ namespace WindowsFormsApplication2.Parsers.ItemParser {
 
         }
 
-        public static PoeItem CreateItem() {
+        public static IItem CreateItem() {
             try {
                 if (Clipboard.ContainsText()) {
-                    var text = Clipboard.GetText();
+                    PoeItemParser poeItemParser = new PoeItemParser();
                     ///////
                     return null;
                 }

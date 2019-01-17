@@ -8,12 +8,18 @@ using System.Threading.Tasks;
 namespace WindowsFormsApplication2.Parsers.ItemParser.ItemBuilder {
 
 
+    public enum ItemStatus {
+        Corrupted,
+        Unidentified,
+        Identified
+    }
+
 
     public class PoeItemParser : IItemParser<IItem> {
         public IItem Parse(string rawData, IItem itemToParse) {
             var sections = Regex.Split(rawData, "--------");
             if (sections.Any()) {
-                PoeItem poeItem = new PoeItem();
+                
                 var headerparser = new ItemBaseHeaderParser();
                 return headerparser.Parse(rawData, )
             }
@@ -33,13 +39,12 @@ namespace WindowsFormsApplication2.Parsers.ItemParser.ItemBuilder {
     }
 
     public interface IItem {
-        bool IsCorrupted { get; set; }
+        ItemStatus ItemStatus { get; set; }
     }
 
     public interface IItemBaseHeader : IItem {
         string BaseName { get; set; }
-        ItemRarity Rarity { get; set; }
-        bool Itendified { get; set; }
+        ItemRarity Rarity { get; set; }        
     }
 
     public interface IItemHeader : IItemBaseHeader {
@@ -90,7 +95,7 @@ namespace WindowsFormsApplication2.Parsers.ItemParser.ItemBuilder {
         public string BaseName { get ; set ; }
         public bool IsCorrupted { get ; set ; }
         public ItemRarity Rarity { get ; set ; }
-        public bool Itendified { get; set ; }
+        public bool Itendified { get; set ; }        
     }
 
 

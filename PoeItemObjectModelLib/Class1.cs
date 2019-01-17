@@ -5,8 +5,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace PoeItemObjectModelLib
-{
+namespace PoeItemObjectModelLib {
+
     public enum ItemStatus {
         Corrupted,
         Unidentified,
@@ -20,55 +20,56 @@ namespace PoeItemObjectModelLib
         Unique
     }
 
+    public static class PoeItemsExtensions {
+        public static bool IsIdentified(this IItem self) {
+            return self.ItemStatus == ItemStatus.Corrupted || self.ItemStatus == ItemStatus.Identified;
+        }
+
+
+    }
+
     //class PoeParser {
     //    IItem Parse(string str) {
-            
+
     //    }
     //}
 
 
-    public interface IItemParser<T> where T:IItem {
-        void Parse(string rawdata, T item);
+    public interface IItemParser<T> where T : IItem {
+        T Parse(string rawdata);
     }
 
-    public class ItemParser:PoeItemParser, IItemParser<IItem> {
-        public void Parse(string rawdata, IItem item) {
-            item.ItemStatus=ItemStatus.Corrupted;            
-        }
+    public class ItemParser {
 
         public void DoParse(string rawData) {
 
             var sections = Regex.Split(rawData, "--------");
             if (sections.Any()) {
-                PoeItem poeItem = new PoeItem();
-                Parse(rawData, poeItem);
-                GetNextParser<IItemBaseHeader>().Parse();
-                
-            }            
+
+                PoeItemParser poeItemParser = new PoeItemParser();
+                var item = poeItemParser.Parse(sections.Last());
+                if (item.IsIdentified()) {
+
+                }
+                ItemBaseHeaderParser headerParser = new ItemBaseHeaderParser();
+                headerParser.Parse(sections.First());
+            }
         }
 
-        protected override IItemParser<IItemBaseHeader> GetNextParser<IItemBaseHeader>() {
-            return new ItemBaseHeaderParser() as IItemParser<IItemBaseHeader>;
-        }
-    }
-
-    public abstract class PoeItemParser {
-        protected abstract IItemParser<T> GetNextParser<T>() where T : IItem;
-
-
-
-
-        //public IItem Parse(string rawData) {
-
+        //protected override IItemParser<IItemBaseHeader> GetNextParser<IItemBaseHeader>() {
+        //    return new ItemBaseHeaderParser() as IItemParser<IItemBaseHeader>;
         //}
     }
 
-    public class ItemBaseHeaderParser:PoeItemParser,IItemParser<IItemBaseHeader> {
-        public void Parse(string rawdata, IItemBaseHeader item) {
+
+    class PoeItemParser : IItemParser<IItem> {
+        public IItem Parse(string rawdata) {
             throw new NotImplementedException();
         }
+    }
 
-        protected override IItemParser<T> GetNextParser<T>() {
+    public class ItemBaseHeaderParser : IItemParser<IItemBaseHeader> {
+        public IItemBaseHeader Parse(string rawdata) {
             throw new NotImplementedException();
         }
     }
@@ -78,27 +79,71 @@ namespace PoeItemObjectModelLib
         ItemStatus ItemStatus { get; set; }
     }
 
-    public interface IItemBaseHeader :IItem {
+    public interface IItemBaseHeader : IItem {
         string BaseName { get; set; }
         ItemRarity Rarity { get; set; }
         string Class { get; set; }
     }
 
-    public interface IItemHeader :IItemBaseHeader {
+    public interface IItemHeader : IItemBaseHeader {
         string Name { get; set; }
     }
 
-    public interface ICurrencyGlobalParams :IItem {
+    public interface ICurrency: IItemBaseHeader {
+
+    }
+
+    public interface IGem : IItemBaseHeader {
+
+    }
+
+    public interface IMap : IItemBaseHeader {
+
+    }
+
+    public interface IOneHand : IItemBaseHeader {
+
+    }
+
+    public interface IOneTwoHand : IItemBaseHeader {
+
+    }
+
+    public interface IBodyArmor : IItemBaseHeader {
+
+    }
+
+    public interface IHelmet : IItemBaseHeader {
+
+    }
+
+    public interface IGloves : IItemBaseHeader {
+
+    }
+
+    public interface IBoots : IItemBaseHeader {
+
+    }
+
+    public interface IShield : IItemBaseHeader {
+
+    }
+
+    public interface IAccesorie : IItemBaseHeader {
+
+    }
+
+
+    public interface ICurrencyGlobalParams : IItem {
         int Count { get; set; }
     }
 
-    interface IMapGlobalParams :IItem {
+    interface IMapGlobalParams : IItem {
         int Tier { get; set; }
         int ItemQuantity { get; set; }
         int ItemRarity { get; set; }
         int PackSize { get; set; }
     }
-
 
     //    Rarity: Rare
     //Loath Spiral
@@ -122,32 +167,29 @@ namespace PoeItemObjectModelLib
     //--------
     //Note: ~price 2 chaos
 
-
-
-    interface IMapSuffixAndPrefixBody :IItem {
+    interface IMapSuffixAndPrefixBody : IItem {
         List<string> PreffixAndSuffixes { get; set; }
     }
 
-    class PoeItem :IItem {
+    class PoeItem : IItem {
         public ItemStatus ItemStatus { get; set; }
     }
 
-    class ItemBase :PoeItem {
+    class ItemBase : PoeItem {
         public string BaseName { get; set; }
         public string Class { get; set; }
-        public ItemStatus ItemStatus { get; set; }
-        public ItemRarity Rarity { get; set; }                
+        public ItemRarity Rarity { get; set; }
     }
 
 
-    class Map :ItemBase, IMapGlobalParams {
+    class Map : ItemBase, IMapGlobalParams {
         public int Tier { get; set; }
         public int ItemQuantity { get; set; }
         public int ItemRarity { get; set; }
         public int PackSize { get; set; }
     }
 
-    class RarityMap :Map, IMapSuffixAndPrefixBody, IItemHeader {
+    class RarityMap : Map, IMapSuffixAndPrefixBody, IItemHeader {
         public List<string> PreffixAndSuffixes { get; set; }
         public string Name { get; set; }
     }

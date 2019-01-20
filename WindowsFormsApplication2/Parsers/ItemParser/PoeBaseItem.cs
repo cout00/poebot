@@ -4,19 +4,13 @@ using WindowsFormsApplication2.Parsers.ItemParser.ItemBuilder;
 
 namespace WindowsFormsApplication2.Parsers.ItemParser {
 
-
-    public class PoeItem : IItem {
-
-    }
-
-    class PoeItemClassBase : IItemBaseHeader {
-        public string BaseName { get; set; }
-    }
+   
+    //class PoeItemClassBase : IItemBaseHeader {
+    //    public string BaseName { get; set; }
+    //}
 
 
-    public class PoeBaseItem : IItem {
-
-
+    public class PoeBaseItem{
 
         public string Class { get; set; }
         public string BaseName { get; set; }

@@ -1,4 +1,5 @@
-﻿using Process.NET;
+﻿using Microsoft.Win32;
+using Process.NET;
 using Process.NET.Memory;
 using Process.NET.Windows;
 using System;
@@ -16,6 +17,7 @@ namespace WindowsFormsApplication2.Native {
         public const string GameProcessName = "PathOfExile";
         public const double AngleStep = 22.5d;
         public const int StandartDelay = 200;
+        public static string GameFolder;
 
         public static IWindow GameWindow { get; private set; }
 
@@ -40,6 +42,12 @@ namespace WindowsFormsApplication2.Native {
             GameMainWindowHandle = process.MainWindowHandle;
             var processSharp = new ProcessSharp(process, MemoryType.Remote);
             GameWindow = processSharp.WindowFactory.MainWindow;
+
+            string InstallPath = (string)Registry.GetValue(@"HKEY_CURRENT_USER\Software\GrindingGearGames\Path of Exile", "InstallLocation", null);
+            if (InstallPath != null) {
+                GameFolder = InstallPath;
+            }
+
         }
 
         public static Rectangle GetGameWindowRectange() {

@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using WindowsFormsApplication2.Native;
 
-namespace WindowsFormsApplication2.Parsers.ItemParser {
+namespace WindowsFormsApplication2.Parsers.GameLogParser {
     public class LongFileReaderSafe {
         int oldSize = 0;
-        public event EventHandler<string> OnNewData;
+        public event EventHandler<string> NewData;
         Timer _timer = new Timer();
         BinaryReader file;
         public LongFileReaderSafe(string filePath) {
@@ -21,13 +21,15 @@ namespace WindowsFormsApplication2.Parsers.ItemParser {
             _timer.Start();
         }
 
+        protected virtual void OnNewData(string newstr) { }
 
         void OnTick(object sender, EventArgs e) {
             if (file.BaseStream.Length != oldSize) {
                 var res = file.BaseStream.Seek(oldSize, SeekOrigin.Begin);
-                var bytes = file.ReadBytes((int)file.BaseStream.Length-oldSize);
+                var bytes = file.ReadBytes((int)file.BaseStream.Length - oldSize);
                 var str = Encoding.UTF8.GetString(bytes);
-                OnNewData(this, str);
+                NewData?.Invoke(this, str);
+                OnNewData(str);
             }
             oldSize = (int)file.BaseStream.Length;
         }

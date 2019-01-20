@@ -15,16 +15,16 @@ namespace WindowsFormsApplication2.Parsers.ItemParser.ItemBuilder {
     }
 
 
-    public class PoeItemParser : IItemParser<IItem> {
-        public IItem Parse(string rawData, IItem itemToParse) {
-            var sections = Regex.Split(rawData, "--------");
-            if (sections.Any()) {
+    //public class PoeItemParser : IItemParser<IItem> {
+    //    //public IItem Parse(string rawData, IItem itemToParse) {
+    //    //    var sections = Regex.Split(rawData, "--------");
+    //    //    if (sections.Any()) {
                 
-                var headerparser = new ItemBaseHeaderParser();
-                return headerparser.Parse(rawData, )
-            }
-        }
-    }
+    //    //        var headerparser = new ItemBaseHeaderParser();
+    //    //        return headerparser.Parse(rawData, )
+    //    //    }
+    //    //}
+    //}
 
     public class ItemBaseHeaderParser : IItemParser<IItemBaseHeader> {
         public IItemBaseHeader Parse(string rawData, IItemBaseHeader itemToParse) {
@@ -87,27 +87,27 @@ namespace WindowsFormsApplication2.Parsers.ItemParser.ItemBuilder {
 
 
 
-    interface IMapSuffixAndPrefixBody : IItem {
-        List<string> PreffixAndSuffixes { get; set; }
-    }
+    //interface IMapSuffixAndPrefixBody : IItem {
+    //    List<string> PreffixAndSuffixes { get; set; }
+    //}
 
-    class ItemBase : IItemBaseHeader {
-        public string BaseName { get ; set ; }
-        public bool IsCorrupted { get ; set ; }
-        public ItemRarity Rarity { get ; set ; }
-        public bool Itendified { get; set ; }        
-    }
+    //class ItemBase : IItemBaseHeader {
+    //    public string BaseName { get ; set ; }
+    //    public bool IsCorrupted { get ; set ; }
+    //    public ItemRarity Rarity { get ; set ; }
+    //    public bool Itendified { get; set ; }        
+    //}
 
 
-    class Map : ItemBase, IMapGlobalParams {
-        public int Tier { get ; set ; }
-        public int ItemQuantity { get ; set ; }
-        public int ItemRarity { get ; set ; }
-        public int PackSize { get ; set ; }
-    }
+    //class Map : ItemBase, IMapGlobalParams {
+    //    public int Tier { get ; set ; }
+    //    public int ItemQuantity { get ; set ; }
+    //    public int ItemRarity { get ; set ; }
+    //    public int PackSize { get ; set ; }
+    //}
 
-    class RarityMap : Map, IMapSuffixAndPrefixBody, IItemHeader {
-        public List<string> PreffixAndSuffixes { get ; set ; }
-        public string Name { get ; set ; }
-    }
+    //class RarityMap : Map, IMapSuffixAndPrefixBody, IItemHeader {
+    //    public List<string> PreffixAndSuffixes { get ; set ; }
+    //    public string Name { get ; set ; }
+    //}
 }

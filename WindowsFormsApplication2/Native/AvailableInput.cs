@@ -7,11 +7,12 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WindowsInput;
+using WindowsInput.Native;
 using Point = System.Drawing.Point;
 
 namespace WindowsFormsApplication2.Native {
 
-    [Flags]
     public enum InputCodes {
         Modifiers = -65536,
         None = 0,
@@ -213,6 +214,7 @@ namespace WindowsFormsApplication2.Native {
 
         static IKeyboard Keyboard { get; set; }
         static IMouse Mouse { get; set; }
+        static InputSimulator InputSimulator { get; set; }
 
         static bool IsMouseInput(InputCodes code) {
             return code == InputCodes.LButton || code == InputCodes.RButton || code == InputCodes.MButton;
@@ -222,14 +224,28 @@ namespace WindowsFormsApplication2.Native {
             return (Keys)Enum.ToObject(typeof(Keys), (int)code);
         }
 
+        static VirtualKeyCode InputToVirtualKeyCode(InputCodes code) {
+            return (VirtualKeyCode)Enum.ToObject(typeof(VirtualKeyCode), (int)code);
+        }
+
         static AvailableInput() {
             Keyboard = NativeApiWrapper.GameWindow.Keyboard;
             Mouse = NativeApiWrapper.GameWindow.Mouse;
+            InputSimulator = new InputSimulator();
+        }
+
+        public static void InputCombination(InputCodes modifier, InputCodes code) {
+            if (IsMouseInput(code)) {
+                InputSimulator.Keyboard.KeyDown(InputToVirtualKeyCode(modifier));
+                Input(code);
+                InputSimulator.Keyboard.KeyUp(InputToVirtualKeyCode(modifier));
+            }
+            InputSimulator.Keyboard.ModifiedKeyStroke(InputToVirtualKeyCode(modifier).Yield(), InputToVirtualKeyCode(code).Yield());
         }
 
         public static void Input(InputCodes code) {
-            if (!NativeApiWrapper.GameWindow.IsActivated)
-                return;            
+            //if (!NativeApiWrapper.GameWindow.IsActivated)
+            //    return;            
             if (IsMouseInput(code)) {
                 if (code == InputCodes.LButton) {
                     Mouse.ClickLeft();
@@ -247,8 +263,8 @@ namespace WindowsFormsApplication2.Native {
         }
 
         public static void MouseMove(Point point) {
-            if (!NativeApiWrapper.GameWindow.IsActivated)
-                return;
+            //if (!NativeApiWrapper.GameWindow.IsActivated)
+            //    return;
             Mouse.MoveTo(point.X, point.Y);
         }
 

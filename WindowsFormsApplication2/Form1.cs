@@ -26,6 +26,8 @@ using WindowsFormsApplication2.AreaRunner.LockedAction;
 using Microsoft.Win32;
 using WindowsFormsApplication2.Parsers.GameLogParser;
 using WindowsFormsApplication2.AreaRunner.InputScript;
+using WindowsFormsApplication2.Parsers.ItemParser;
+using PoeItemObjectModelLib;
 
 namespace WindowsFormsApplication2 {
 
@@ -54,8 +56,8 @@ namespace WindowsFormsApplication2 {
             //AvailableInput.Input(InputCodes.Return);
             //AvailableInput.InputCombination(InputCodes.ControlKey, InputCodes.V);
 
-            ZanaTradeScript aqueductNewAreaScript = new ZanaTradeScript();
-            aqueductNewAreaScript.Run();
+            ItemFactory itemFactory = new ItemFactory();
+            itemFactory.GetModel();
         }
 
         private void LogFileReader_NewData(object sender, string e) {

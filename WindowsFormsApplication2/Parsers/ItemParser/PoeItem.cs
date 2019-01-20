@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows.Forms;
-using WindowsFormsApplication2.Parsers.ItemParser.ItemBuilder;
 
 namespace WindowsFormsApplication2.Parsers.ItemParser {
     //public class PoeItem : PoeBaseItem {

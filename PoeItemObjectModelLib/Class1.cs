@@ -21,7 +21,8 @@ namespace PoeItemObjectModelLib {
         Rare,
         Unique,
         Currency,
-        Gem
+        Gem,
+        Divination_Card
     }
 
 
@@ -52,25 +53,56 @@ namespace PoeItemObjectModelLib {
 
     }
 
-    class ItemHeader : IItemBaseHeader, IParser {
+    public class ElementContainer {
+
+        List<object> Elements = new List<object>();
+
+        public void AddElement<T>(IElementParser<T> element) {
+            Elements.Add(element);
+        }
+
+        public IElementParser<T> GetElement<T>() {
+            return Elements.Where(a => {
+                var res = a as IElementParser<T>;
+                return res != null;
+            }).Select(a => a as IElementParser<T>).FirstOrDefault();
+        }
+
+    }
+
+
+    public class ItemHeader : IItemBaseHeader, IParser {
         public BaseNames BaseName { get; set; }
         public ItemClass Class { get; set; }
         public ItemStatus Status { get; set; }
-        public ItemRarity Rarity { get; set; }                
-        
+        public ItemRarity Rarity { get; set; }
+
+        protected ElementContainer ElementContainer { get; }
+
         public virtual IItem GetItem() {
-            if(Class==ItemClass.Currency) {
-                Currency currency=new Currency(this);
-                currency.Parse();
+            if (Class == ItemClass.Currency) {
+                Currency currency = new Currency(this);
+                currency.Parse(rawData);
                 return currency;
             }
+            if (Class.IsGem()) {
+                Gem gem = new Gem(this);
+                gem.Parse(rawData);
+                return gem;
+            }
+            if (Class == ItemClass.Divination_Card) {
+                DivCard divCard = new DivCard(this);
+                divCard.Parse(rawData);
+                return divCard;
+            }
 
-            if(Class.IsArmor()) {
-                
+
+            if (Class.IsArmor()) {
+
             }
         }
 
-        public ItemHeader(IItemBaseHeader itemHeader) {
+        public ItemHeader(IItemBaseHeader itemHeader):this() {
             BaseName = itemHeader.BaseName;
             Class = itemHeader.Class;
             Status = itemHeader.Status;
@@ -78,7 +110,7 @@ namespace PoeItemObjectModelLib {
         }
 
         public ItemHeader() {
-
+            ElementContainer.AddElement(new QualtityElement());
         }
 
         void ParseItemStatus(string rawData) {
@@ -94,29 +126,62 @@ namespace PoeItemObjectModelLib {
             return;
         }
 
+        IEnumerable<string> rawData;
+
         public virtual void Parse(IEnumerable<string> rawData) {
+            this.rawData = rawData;
             ParseItemStatus(rawData.Last());
             var headerElements = Regex.Split(rawData.First(), Environment.NewLine).RemoveEmpty();
             Rarity = Regex.Replace(headerElements.First(), "Rarity: ", "").ToRarity();
+            if (Rarity == ItemRarity.Divination_Card) {
+                BaseName = BaseNames.Divination_Card;
+                Class = ItemClass.Divination_Card;
+                return;
+            }
             BaseName = headerElements.Last().ToBaseName();
             var outItem = ItemBasePreloader.GetItem(BaseName);
-            Class = outItem == null ? ItemClass.Debug : outItem.Class;                        
+            Class = outItem == null ? ItemClass.Debug : outItem.Class;
         }
     }
 
-    class ExtendedItemHeader : ItemHeader, IItemHeader {
+    public class QualityItem : ItemHeader, IQualityItem {
+        public QualityItem(IItemBaseHeader itemHeader) : base(itemHeader) {
 
-        public ExtendedItemHeader(IItemBaseHeader itemHeader):base(itemHeader) {
-            
         }
 
-        public ExtendedItemHeader(IItemHeader itemHeader):base(itemHeader) {
+        public override void Parse(IEnumerable<string> rawData) {
+            Quality = ElementContainer.GetElement<IQualityItem>().ParseElement(rawData.ToList()[1]).Quality;
+        }
+
+        public int Quality { get ; set ; }
+    }
+
+    public class ExtendedQualityItem : ExtendedItemHeader, IQualityItem {
+        public ExtendedQualityItem(IItemHeader itemHeader) : base(itemHeader) {
+
+        }
+
+        public override void Parse(IEnumerable<string> rawData) {
+            Quality = ElementContainer.GetElement<IQualityItem>().ParseElement(rawData.ToList()[1]).Quality;
+        }
+
+        public int Quality { get; set; }
+    }
+
+
+    public class ExtendedItemHeader : ItemHeader, IItemHeader {
+
+        public ExtendedItemHeader(IItemBaseHeader itemHeader) : base(itemHeader) {
+
+        }
+
+        public ExtendedItemHeader(IItemHeader itemHeader) : base(itemHeader) {
             Name = itemHeader.Name;
         }
 
         public string Name { get; set; }
 
-        public override void Parse(IEnumerable<string> rawdata) {            
+        public override void Parse(IEnumerable<string> rawdata) {
             var headerElements = Regex.Split(rawdata.First(), Environment.NewLine).RemoveEmpty().ToList();
             Name = headerElements[1];
         }
@@ -125,15 +190,15 @@ namespace PoeItemObjectModelLib {
 
     class Currency : ItemHeader, ICurrency {
 
-        public int MaxStackSize { get ; set ; }
-        public int StackSize { get ; set; }
+        public int MaxStackSize { get; set; }
+        public int StackSize { get; set; }
 
         public Currency(IItemBaseHeader itemHeader) : base(itemHeader) {
 
         }
 
         Currency() {
-            
+
         }
 
         public override void Parse(IEnumerable<string> rawData) {
@@ -145,15 +210,30 @@ namespace PoeItemObjectModelLib {
         }
     }
 
+    class Gem : QualityItem {
+        public Gem(IItemBaseHeader itemHeader) : base(itemHeader) {
+
+        }
+        
+    }
+
+    class DivCard : ItemHeader, IIDivCard {
+        public DivCard(IItemBaseHeader itemHeader) : base(itemHeader) {
+
+        }
+    }
+
+
     public interface ICurrency : IItemBaseHeader {
         int MaxStackSize { get; set; }
         int StackSize { get; set; }
     }
 
+
     public interface IParser {
         IItem GetItem();
     }
-    
+
     public interface IItem {
         ItemStatus Status { get; set; }
         void Parse(IEnumerable<string> rawData);
@@ -173,14 +253,23 @@ namespace PoeItemObjectModelLib {
         int SocketsCount { get; set; }
     }
 
+    interface IQualityItem {
+        int Quality { get; set; }
+    }
 
-
-
-    interface IBaseArmor : IItemBaseHeader, ISocketedItem {
+    interface IIDivCard : IItemBaseHeader {
 
     }
 
-    interface IArmor : IItemHeader, ISocketedItem {
+    interface IGem : IItemBaseHeader, IQualityItem {
+
+    }
+
+    interface IBaseArmor : IItemBaseHeader, ISocketedItem, IQualityItem {
+
+    }
+
+    interface IArmor : IItemHeader, ISocketedItem, IQualityItem {
 
     }
 
@@ -192,6 +281,23 @@ namespace PoeItemObjectModelLib {
 
     interface IBaseMap : IItemBaseHeader {
         int Tier { get; set; }
+    }
+
+    public interface IElementParser<T> {
+        T ParseElement(string data);
+    }
+
+    class QualtityElement : IQualityItem, IElementParser<IQualityItem> {
+        public int Quality { get; set; }
+
+        public IQualityItem ParseElement(string data) {
+            var part = data;
+            var split = Regex.Split(part, Environment.NewLine);
+            var targetLine = split.Where(a => a.Contains("Quality")).
+                Select(a => Regex.Replace(a, "Quality: +", string.Empty)).Select(a => Regex.Replace(a, "% (augmented)", string.Empty)).FirstOrDefault();
+            Quality = int.Parse(targetLine);
+            return this;
+        }
     }
 
     ////    Rarity: Rare

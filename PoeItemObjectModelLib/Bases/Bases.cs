@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace PoeItemObjectModelLib.Bases {
 
+
     public enum ItemClass {
         Debug,
         Amulet,
@@ -42,11 +43,13 @@ namespace PoeItemObjectModelLib.Bases {
         Two_Hand_Axe,
         Two_Hand_Mace,
         Two_Hand_Sword,
-        Map
+        Map,
+        Divination_Card
     }
 
     public enum BaseNames {
         Debug,
+        Divination_Card,
         Atoll_Map,
         Channel_Map,
         Flooded_Mine_Map,
@@ -1598,7 +1601,7 @@ namespace PoeItemObjectModelLib.Bases {
 
         public static ItemRarity ToRarity(this string name) {
             try {
-                return (ItemRarity)Enum.Parse(typeof(ItemRarity), name);
+                return (ItemRarity)Enum.Parse(typeof(ItemRarity), name.Replace(" ", "_"));
             }
             catch (Exception) {
                 return ItemRarity.Debug;

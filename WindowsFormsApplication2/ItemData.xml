@@ -9066,4 +9066,10 @@
     <Height>1</Height>
     <Width>1</Width>
   </PoePreloadedItem>
+  <PoePreloadedItem>
+    <Class>Divination Card</Class>
+    <BaseName>Divination Card</BaseName>
+    <Height>1</Height>
+    <Width>1</Width>
+  </PoePreloadedItem>
 </ArrayOfPoePreloadedItem>

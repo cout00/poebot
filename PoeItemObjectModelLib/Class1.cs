@@ -31,11 +31,12 @@ namespace PoeItemObjectModelLib {
             try {
                 if (Clipboard.ContainsText()) {
                     var text = Clipboard.GetText();
+                    var elements = Regex.Split(text, "--------").RemoveEmpty().ToList();
                     ItemHeader itemHeader = new ItemHeader();
-                    itemHeader.Parse(text);
+                    itemHeader.Parse(elements);
                     if (itemHeader.Rarity != ItemRarity.Normal) {
                         ExtendedItemHeader extendedItemHeader = new ExtendedItemHeader(itemHeader);
-                        extendedItemHeader.Parse(text);
+                        extendedItemHeader.Parse(elements);
                         return extendedItemHeader.GetItem();
                     }
                     return itemHeader.GetItem();
@@ -51,29 +52,29 @@ namespace PoeItemObjectModelLib {
 
     }
 
-    class ItemHeader : IItemBaseHeader, IParser, IChainElement {
+    class ItemHeader : IItemBaseHeader, IParser {
         public BaseNames BaseName { get; set; }
         public ItemClass Class { get; set; }
         public ItemStatus Status { get; set; }
-        public ItemRarity Rarity { get; set; }
-        public IEnumerable<ItemClass> TriggerOn { get; set; }
-        public virtual IChainElement NextElement {
-            get {
-                var element = new Currency(this);
-                element.Data = Data;
-                return element;
+        public ItemRarity Rarity { get; set; }                
+        
+        public virtual IItem GetItem() {
+            if(Class==ItemClass.Currency) {
+                Currency currency=new Currency(this);
+                currency.Parse();
+                return currency;
+            }
+
+            if(Class.IsArmor()) {
+                
             }
         }
 
-        public virtual IEnumerable<string> Data { get; set ; }
-
-        public virtual IItem GetItem() {
-            
-
-        }
-
         public ItemHeader(IItemBaseHeader itemHeader) {
-
+            BaseName = itemHeader.BaseName;
+            Class = itemHeader.Class;
+            Status = itemHeader.Status;
+            Rarity = itemHeader.Rarity;
         }
 
         public ItemHeader() {
@@ -93,18 +94,13 @@ namespace PoeItemObjectModelLib {
             return;
         }
 
-        public virtual void Parse(string rawData) {
-            var elements = Regex.Split(rawData, "--------").RemoveEmpty().ToList();
-            ParseItemStatus(elements.Last());
-            var headerElements = Regex.Split(elements.First(), Environment.NewLine).RemoveEmpty();
+        public virtual void Parse(IEnumerable<string> rawData) {
+            ParseItemStatus(rawData.Last());
+            var headerElements = Regex.Split(rawData.First(), Environment.NewLine).RemoveEmpty();
             Rarity = Regex.Replace(headerElements.First(), "Rarity: ", "").ToRarity();
             BaseName = headerElements.Last().ToBaseName();
             var outItem = ItemBasePreloader.GetItem(BaseName);
-            Class = outItem == null ? ItemClass.Debug : outItem.Class;
-            elements.Remove(elements.First());
-            elements.Remove(elements.Last());
-            Data = elements;
-
+            Class = outItem == null ? ItemClass.Debug : outItem.Class;                        
         }
     }
 
@@ -120,16 +116,14 @@ namespace PoeItemObjectModelLib {
 
         public string Name { get; set; }
 
-        public override void Parse(string rawdata) {
-            var elements = Regex.Split(rawdata, "--------").RemoveEmpty();
-            var headerElements = Regex.Split(elements.First(), Environment.NewLine).RemoveEmpty().ToList();
+        public override void Parse(IEnumerable<string> rawdata) {            
+            var headerElements = Regex.Split(rawdata.First(), Environment.NewLine).RemoveEmpty().ToList();
             Name = headerElements[1];
         }
     }
 
 
     class Currency : ItemHeader, ICurrency {
-        public override IChainElement NextElement => base.NextElement;
 
         public int MaxStackSize { get ; set ; }
         public int StackSize { get ; set; }
@@ -138,34 +132,31 @@ namespace PoeItemObjectModelLib {
 
         }
 
-        public override void Parse(string rawData) {
-            base.Parse(rawData);
+        Currency() {
+            
         }
 
+        public override void Parse(IEnumerable<string> rawData) {
+            var block = rawData.ToList()[1];
+            var targetData = Regex.Replace(block, "Stack Size: ", string.Empty);
+            var splitedData = Regex.Split(targetData, "/");
+            StackSize = int.Parse(splitedData[0]);
+            MaxStackSize = int.Parse(splitedData[1]);
+        }
     }
 
-
-
-    public interface ICurrency : IItemBaseHeader, IChainElement {
+    public interface ICurrency : IItemBaseHeader {
         int MaxStackSize { get; set; }
         int StackSize { get; set; }
-
     }
-
 
     public interface IParser {
         IItem GetItem();
     }
-
-    public interface IChainElement {
-        IEnumerable<ItemClass> TriggerOn { get; set; }
-        IChainElement NextElement { get; }
-        IEnumerable<string> Data { get; set; }
-    }
-
+    
     public interface IItem {
         ItemStatus Status { get; set; }
-        void Parse(string rawData);
+        void Parse(IEnumerable<string> rawData);
     }
 
     public interface IItemBaseHeader : IItem {
@@ -185,11 +176,11 @@ namespace PoeItemObjectModelLib {
 
 
 
-    interface IBaseArmor : IItemBaseHeader, ISocketedItem, IChainElement {
+    interface IBaseArmor : IItemBaseHeader, ISocketedItem {
 
     }
 
-    interface IArmor : IItemHeader, ISocketedItem, IChainElement {
+    interface IArmor : IItemHeader, ISocketedItem {
 
     }
 
@@ -199,7 +190,7 @@ namespace PoeItemObjectModelLib {
         int PackSize { get; set; }
     }
 
-    interface IBaseMap : IItemBaseHeader, IChainElement {
+    interface IBaseMap : IItemBaseHeader {
         int Tier { get; set; }
     }
 

@@ -1609,6 +1609,41 @@ namespace PoeItemObjectModelLib.Bases {
             return self.Where(a => a != string.Empty);
         }
 
+        public static bool IsOneOf<T>(this T self, params T[] args) {
+            return args.ToList().Contains(self);
+        }
+
+        public static bool IsArmor(this ItemClass itemClass) {
+            return itemClass.IsOneOf(ItemClass.Shield,
+                ItemClass.Body_Armour,
+                ItemClass.Boots,
+                ItemClass.Gloves,
+                ItemClass.Helmet, 
+                ItemClass.Quiver);
+        }
+
+        public static bool IsWeapon(this ItemClass itemClass) {
+            return itemClass.IsOneOf(ItemClass.Claw,
+                ItemClass.Bow,
+                ItemClass.Dagger,
+                ItemClass.FishingRod,
+                ItemClass.One_Hand_Axe,
+                ItemClass.One_Hand_Sword,
+                ItemClass.Sceptre,
+                ItemClass.Staff,
+                ItemClass.Thrusting_One_Hand_Sword,
+                ItemClass.One_Hand_Mace,
+                ItemClass.Two_Hand_Axe,
+                ItemClass.Two_Hand_Mace,
+                ItemClass.Two_Hand_Sword, 
+                ItemClass.Wand);
+        }
+
+        public static bool IsGem(this ItemClass itemClass) {
+            return itemClass.IsOneOf(ItemClass.Active_Skill_Gem, 
+                ItemClass.Support_Skill_Gem);
+        }
+
     }
 
-}
+    }

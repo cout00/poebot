@@ -168,6 +168,15 @@ namespace PoeItemObjectModelLib {
         public int Quality { get; set; }
     }
 
+//    Rarity: Divination Card
+//No Traces
+//--------
+//Stack Size: 1/9
+//--------
+//30x Orb of Scouring
+//--------
+//There is no mistake so great that it cannot be undone.
+
 
     public class ExtendedItemHeader : ItemHeader, IItemHeader {
 

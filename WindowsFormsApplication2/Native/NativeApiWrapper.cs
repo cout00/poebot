@@ -1,4 +1,5 @@
-﻿using Microsoft.Win32;
+﻿using IWshRuntimeLibrary;
+using Microsoft.Win32;
 using Process.NET;
 using Process.NET.Memory;
 using Process.NET.Windows;
@@ -6,9 +7,11 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WindowsFormsApplication2.Parsers;
 using static WindowsFormsApplication2.Native.NativeAPI;
 
 namespace WindowsFormsApplication2.Native {
@@ -32,7 +35,27 @@ namespace WindowsFormsApplication2.Native {
             }
         }
 
-        static NativeApiWrapper() {            
+        public static void RunGame() {
+
+            try {               
+                ConfigParser configParser = new ConfigParser();
+                if (!configParser.ConfigIsValid(ConfigParser.Config)) 
+                    configParser.SetConfig(ConfigParser.Config);
+                if (!System.IO.File.Exists(Path.Combine(GameFolder, "Client.lnk"))) {
+                    WshShell wshShell = new WshShell();
+                    var shortCut = wshShell.CreateShortcut(Path.Combine(GameFolder, "Client.lnk")) as IWshShortcut;
+                    shortCut.TargetPath = Path.Combine(GameFolder, "Client.exe");
+                    shortCut.WorkingDirectory = GameFolder;
+                    shortCut.Save();
+                }
+                System.Diagnostics.Process.Start(Path.Combine(GameFolder, "Client.lnk"));              
+            }
+            catch (Exception) {
+                
+            }
+        }
+
+        public static void InitGameInstance() {
             var processes = System.Diagnostics.Process.GetProcessesByName(GameProcessName).Where(a => a.MainWindowHandle != IntPtr.Zero);
             if (!processes.Any())
                 throw new Exception($"Process not found {GameProcessName}");
@@ -42,7 +65,11 @@ namespace WindowsFormsApplication2.Native {
             GameMainWindowHandle = process.MainWindowHandle;
             var processSharp = new ProcessSharp(process, MemoryType.Remote);
             GameWindow = processSharp.WindowFactory.MainWindow;
+            GameWindow.Activate();
+        }
 
+        static NativeApiWrapper() {            
+            
             string InstallPath = (string)Registry.GetValue(@"HKEY_CURRENT_USER\Software\GrindingGearGames\Path of Exile", "InstallLocation", null);
             if (InstallPath != null) {
                 GameFolder = InstallPath;

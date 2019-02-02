@@ -4,9 +4,36 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using WindowsFormsApplication2.Native;
 
 namespace WindowsFormsApplication2.AreaRunner.InputScript {
+
+
+    public class GameRunScript : InputScriptBase {
+        protected override Script StartRecord() {
+            var script = new Script();
+            script.DoDelay(() => 15000);
+            script.DoDelay(() => {
+                NativeApiWrapper.InitGameInstance();
+                return 200;
+            });
+            script.DoInput(() => InputCodes.Space);
+            script.DoInput(() => InputCodes.Space);
+            script.DoInput(() => InputCodes.Space);
+            script.DoMouseMoveWithClick(() => new System.Drawing.Point(344, 448)); //go to password box
+            script.DoInputWithModifiers(() => {
+                Clipboard.SetText(Settings.Password);
+                return new KeyWithModifier() { Key=InputCodes.V, Modifier=InputCodes.LControlKey };
+            });
+            script.DoMouseMoveWithClick(() => new System.Drawing.Point(564, 425)); // click login
+            script.DoInput(() => InputCodes.Return, 1500);
+            return script;
+        }
+    }
+
+
+
     public class AqueductNewAreaScript : InputScriptBase {
         protected override Script StartRecord() {
             var script = new Script();

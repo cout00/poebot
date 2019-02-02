@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using WindowsFormsApplication2.Native;
 
-namespace WindowsFormsApplication2.Parsers.GameLogParser {
-    public class LongFileReaderSafe {
+namespace WindowsFormsApplication2.Parsers {
+    public abstract class LongFileReaderSafe {
         int oldSize = 0;
         public event EventHandler<string> NewData;
         Timer _timer = new Timer();
@@ -21,7 +21,7 @@ namespace WindowsFormsApplication2.Parsers.GameLogParser {
             _timer.Start();
         }
 
-        protected virtual void OnNewData(string newstr) { }
+        protected abstract void OnNewData(string newstr);
 
         void OnTick(object sender, EventArgs e) {
             if (file.BaseStream.Length != oldSize) {

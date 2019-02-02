@@ -11,6 +11,8 @@ namespace WindowsFormsApplication2.Native {
 
         public static Pickit Pickit { get; } = new Pickit();
         public static ItemFactory ItemFactory { get; } = new ItemFactory();
+        public static string UserName = "aizik.frost2@bk.ru";
+        public static string Password = "justforhuk123";
 
         public static InputCodes MoveKey { get; } = InputCodes.D3;
         public static InputCodes MainAttack { get; } = InputCodes.RButton;

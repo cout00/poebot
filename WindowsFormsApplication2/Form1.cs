@@ -24,10 +24,9 @@ using Process.NET.Memory;
 using System.IO;
 using WindowsFormsApplication2.AreaRunner.LockedAction;
 using Microsoft.Win32;
-using WindowsFormsApplication2.Parsers.GameLogParser;
 using WindowsFormsApplication2.AreaRunner.InputScript;
-using WindowsFormsApplication2.Parsers.ItemParser;
 using PoeItemObjectModelLib;
+using WindowsFormsApplication2.Parsers;
 
 namespace WindowsFormsApplication2 {
 
@@ -47,18 +46,27 @@ namespace WindowsFormsApplication2 {
             InitializeComponent();
         }
 
+
         private void button1_Click(object sender, EventArgs e) {
+
+
+            NativeApiWrapper.RunGame();
+            GameRunScript gameRunScript = new GameRunScript();
+            gameRunScript.Run();
+            ////AqueductNewAreaScript aqueductNewAreaScript = new AqueductNewAreaScript();
+            ////aqueductNewAreaScript.Run();
+
 
             //LogFileReader logFileReader = new LogFileReader();
             //logFileReader.NewData += LogFileReader_NewData;         
-            //AvailableInput.MouseMove(new Point(50, 50));
-            //AvailableInput.Input(InputCodes.LButton);
-            //AvailableInput.Input(InputCodes.Return);
-            //AvailableInput.InputCombination(InputCodes.ControlKey, InputCodes.V);
+            ////AvailableInput.MouseMove(new Point(50, 50));
+            ////AvailableInput.Input(InputCodes.LButton);
+            ////AvailableInput.Input(InputCodes.Return);
+            ////AvailableInput.InputCombination(InputCodes.ControlKey, InputCodes.V);
 
-            ItemFactory itemFactory = new ItemFactory();
-            var item = itemFactory.GetModel();
-            var res = Settings.Pickit.IsValid(item);
+            ////ItemFactory itemFactory = new ItemFactory();
+            ////var item = itemFactory.GetModel();
+            ////var res = Settings.Pickit.IsValid(item);
         }
 
         private void LogFileReader_NewData(object sender, string e) {

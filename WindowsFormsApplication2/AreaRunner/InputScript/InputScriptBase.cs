@@ -41,44 +41,39 @@ namespace WindowsFormsApplication2.AreaRunner.InputScript {
 
             public Queue<object> ScriptParts = new Queue<object>();
 
-            public void DoInput(Func<InputCodes> inputFunc, int afterDelay = -1) {
-                if (afterDelay == -1)
-                    DoDelay(() => STANDART_DELAY);
+            public void DoInput(Func<InputCodes> inputFunc, int afterDelay = STANDART_DELAY) {
+                    DoDelay(() => afterDelay);
                 ScriptParts.Enqueue(inputFunc);
             }
 
-            public void DoDelay(Func<int> inputFunc, int afterDelay = -1) {
+            public void DoDelay(Func<int> inputFunc) {
                 ScriptParts.Enqueue(inputFunc);
             }
 
-            public void DoMouseMove(Func<Point> inputFuncXY, int afterDelay = -1) {
-                if (afterDelay == -1)
-                    DoDelay(() => STANDART_DELAY);
+            public void DoMouseMove(Func<Point> inputFuncXY, int afterDelay = STANDART_DELAY) {
+                    DoDelay(() => afterDelay);
                 ScriptParts.Enqueue(inputFuncXY);
             }
 
-            public void DoMouseMoveWithClick(Func<Point> inputFuncXY, int afterDelay = -1) {
-                if (afterDelay == -1)
-                    DoDelay(() => STANDART_DELAY);
+            public void DoMouseMoveWithClick(Func<Point> inputFuncXY, int afterDelay = STANDART_DELAY) {
+
+                DoDelay(() => afterDelay);
                 ScriptParts.Enqueue(inputFuncXY);
                 DoInput(() => InputCodes.LButton);
             }
 
-            public void DoInputWithModifiers(Func<KeyWithModifier> inputWithModifiers, int afterDelay = -1) {
-                if (afterDelay == -1)
-                    DoDelay(() => STANDART_DELAY);
+            public void DoInputWithModifiers(Func<KeyWithModifier> inputWithModifiers, int afterDelay = STANDART_DELAY) {
+                    DoDelay(() => afterDelay);
                 ScriptParts.Enqueue(inputWithModifiers);
             }
 
-            public void DoScript(Func<InputScriptBase> inputScript, int afterDelay = -1) {
-                if (afterDelay == -1)
-                    DoDelay(() => STANDART_DELAY);
+            public void DoScript(Func<InputScriptBase> inputScript, int afterDelay = STANDART_DELAY) {
+                    DoDelay(() => afterDelay);
                 ScriptParts.Enqueue(inputScript);
             }
 
-            public void DoScriptPart(Func<object> inputPart, int afterDelay = -1) {
-                if (afterDelay == -1)
-                    DoDelay(() => STANDART_DELAY);
+            public void DoScriptPart(Func<object> inputPart, int afterDelay = STANDART_DELAY) {
+                    DoDelay(() => afterDelay);
                 var someFunc = inputPart();
                 FOR_INTERNAL_USE_ONLY fOR_INTERNAL_USE_ONLY = new FOR_INTERNAL_USE_ONLY(someFunc);
                 DoScript(() => fOR_INTERNAL_USE_ONLY);

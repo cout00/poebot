@@ -10,12 +10,12 @@ namespace WindowsFormsApplication2.AreaRunner.LockedAction {
 
     }
 
-    public class ActionNewArea : ILockedAction<ActionNewAreaParameter> {
-        public bool Locked { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    //public class ActionNewArea : ILockedAction<ActionNewAreaParameter> {
+    //    public bool Locked { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
-        public Func<Task> DoLockedAction(ActionNewAreaParameter param) {
-            throw new NotImplementedException();
-        }
-    }
+    //    public Func<Task> DoLockedAction(ActionNewAreaParameter param) {
+    //        throw new NotImplementedException();
+    //    }
+    //}
 
 }

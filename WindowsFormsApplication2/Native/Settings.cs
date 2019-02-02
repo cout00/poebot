@@ -1,4 +1,5 @@
-﻿using Process.NET.Native.Types;
+﻿using PoeItemObjectModelLib;
+using Process.NET.Native.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,6 +8,10 @@ using System.Threading.Tasks;
 
 namespace WindowsFormsApplication2.Native {
     public static class Settings {
+
+        public static Pickit Pickit { get; } = new Pickit();
+        public static ItemFactory ItemFactory { get; } = new ItemFactory();
+
         public static InputCodes MoveKey { get; } = InputCodes.D3;
         public static InputCodes MainAttack { get; } = InputCodes.RButton;
 

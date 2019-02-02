@@ -1,6 +1,7 @@
 ﻿using Emgu.CV;
 using Emgu.CV.Structure;
 using Emgu.CV.Util;
+using PoeItemObjectModelLib;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -107,6 +108,6 @@ namespace WindowsFormsApplication2.Native {
             var r2 = vector[0].Y - vector[1].Y;
             return Math.Sqrt(r1 * r1 + r2 * r2);
         }
-
+        
     }
 }

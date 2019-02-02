@@ -1642,6 +1642,11 @@ namespace PoeItemObjectModelLib.Bases {
                 ItemClass.Wand);
         }
 
+        public static bool IsExtendedItem(this ItemRarity itemRarity) {
+            return itemRarity.IsOneOf(ItemRarity.Magic,
+                ItemRarity.Rare, ItemRarity.Unique);
+        }
+
         public static bool IsGem(this ItemClass itemClass) {
             return itemClass.IsOneOf(ItemClass.Active_Skill_Gem, 
                 ItemClass.Support_Skill_Gem);

@@ -57,7 +57,8 @@ namespace WindowsFormsApplication2 {
             //AvailableInput.InputCombination(InputCodes.ControlKey, InputCodes.V);
 
             ItemFactory itemFactory = new ItemFactory();
-            itemFactory.GetModel();
+            var item = itemFactory.GetModel();
+            var res = Settings.Pickit.IsValid(item);
         }
 
         private void LogFileReader_NewData(object sender, string e) {

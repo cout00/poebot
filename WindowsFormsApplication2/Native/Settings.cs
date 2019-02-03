@@ -43,7 +43,6 @@ namespace WindowsFormsApplication2.Native {
         public static InputCodes Skill8 { get; } = InputCodes.D5;
 
         public static int AttackDelay { get; } = 1500;
-
-
+        public static double GlobalScriptDelayModifier { get; } = 1;
     }
 }

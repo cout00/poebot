@@ -9,14 +9,27 @@ using WindowsFormsApplication2.Native;
 
 namespace WindowsFormsApplication2.AreaRunner.InputScript {
 
+    public class ReturnToHideoutScript : InputScriptBase {
+        protected override Script StartRecord() {
+            var script = new Script();
+            script.DoInput(() => {
+                Clipboard.SetText(HideoutCommand);
+                return InputCodes.Return;
+            }, 30);
+            script.DoInputWithModifiers(() => Ctrl_V);
+            script.DoInput(() => InputCodes.Return);
+            return script;
+        }
+    }
+
 
     public class GameRunScript : InputScriptBase {
         protected override Script StartRecord() {
             var script = new Script();
-            script.DoDelay(() => 15000);
+            script.DoDelay(() => 100);
             script.DoDelay(() => {
                 NativeApiWrapper.InitGameInstance();
-                return 200;
+                return 1.5;
             });
             script.DoInput(() => InputCodes.Space);
             script.DoInput(() => InputCodes.Space);
@@ -24,25 +37,61 @@ namespace WindowsFormsApplication2.AreaRunner.InputScript {
             script.DoMouseMoveWithClick(() => new System.Drawing.Point(344, 448)); //go to password box
             script.DoInputWithModifiers(() => {
                 Clipboard.SetText(Settings.Password);
-                return new KeyWithModifier() { Key=InputCodes.V, Modifier=InputCodes.LControlKey };
+                return Ctrl_V;
             });
             script.DoMouseMoveWithClick(() => new System.Drawing.Point(564, 425)); // click login
-            script.DoInput(() => InputCodes.Return, 1500);
+            script.DoInput(() => InputCodes.Return, 10);
+            return script;
+        }
+    }
+
+    public class OpenGameWorldMapImmediately : InputScriptBase {
+        protected override Script StartRecord() {
+            var script = new Script();
+            script.DoMouseMoveWithClick(() => new Point(397, 302), 10);
+            return script;
+        }
+    }
+
+    public class RelogScript : InputScriptBase {
+        protected override Script StartRecord() {
+            var script = new Script();
+            script.DoInput(() => InputCodes.Escape);
+            script.DoMouseMoveWithClick(() => new Point(396, 295));
+            script.DoInput(() => InputCodes.Return, 10);
+            return script;
+        }
+    }
+
+
+    public class AqueductNewAreaFromNineAct : InputScriptBase {
+        protected override Script StartRecord() {
+            var script = new Script();            
+            script.DoScript(() => new AqueductNewAreaBase(), 10);
             return script;
         }
     }
 
 
 
-    public class AqueductNewAreaScript : InputScriptBase {
+    public class AqueductNewAreaBase : InputScriptBase {
+        protected override Script StartRecord() {
+            var script = new Script();
+            script.DoMouseMove(() => new System.Drawing.Point(155, 316));
+            script.DoInputWithModifiers(() => new KeyWithModifier() { Key = InputCodes.LButton, Modifier = InputCodes.LControlKey });
+            script.DoDelay(() => 4);
+            script.DoMouseMoveWithClick(() => new System.Drawing.Point(128, 217));
+            return script;
+        }
+    }
+
+
+    public class AqueductNewAreaScriptFromAriat : InputScriptBase {
         protected override Script StartRecord() {
             var script = new Script();
             script.DoMouseMoveWithClick(() => new System.Drawing.Point(184, 97));
             script.DoMouseMoveWithClick(() => new System.Drawing.Point(223, 117));
-            script.DoMouseMove(() => new System.Drawing.Point(155, 316));
-            script.DoInputWithModifiers(() => new KeyWithModifier() { Key = InputCodes.LButton, Modifier = InputCodes.LControlKey });
-            script.DoDelay(() => 600);
-            script.DoMouseMoveWithClick(() => new System.Drawing.Point(128, 217));
+            script.DoScript(() =>new AqueductNewAreaBase());
             return script;
         }
     }
@@ -96,7 +145,7 @@ namespace WindowsFormsApplication2.AreaRunner.InputScript {
             script.DoInput(() => InputCodes.Escape); //close chest
             script.DoMouseMoveWithClick(() => new System.Drawing.Point(328, 433)); //go to way point
             script.DoDelay(() => 400);
-            script.DoScript(() => new AqueductNewAreaScript());
+            script.DoScript(() => new AqueductNewAreaScriptFromAriat());
             return script;
         }
     }

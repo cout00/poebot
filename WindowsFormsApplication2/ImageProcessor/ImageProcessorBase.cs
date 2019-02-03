@@ -22,7 +22,7 @@ namespace WindowsFormsApplication2.ImageProcessor {
         }
     }
 
-    public abstract class ImageProcessorBase<T, Result> where T : GameScreenReaderBase, new() where Result : ImageProcessorResult, new() {
+    public abstract class ImageProcessorBase<T, Result>:IDisposable where T : GameScreenReaderBase, new() where Result : ImageProcessorResult, new() {
         public event EventHandler<ImageProcessorEventArgs<Result>> OnResult;
 
         Timer timer = new Timer();
@@ -54,6 +54,13 @@ namespace WindowsFormsApplication2.ImageProcessor {
             done = true;
             var result = DoWhenTicket(reader.ReadScreen());
             OnResult?.Invoke(this, new ImageProcessorEventArgs<Result>(result));
+        }
+
+        public void Dispose() {
+            timer.Stop();
+            timer.Tick -= OnTick;
+            timer.Dispose();
+            GC.SuppressFinalize(this);
         }
     }
 }

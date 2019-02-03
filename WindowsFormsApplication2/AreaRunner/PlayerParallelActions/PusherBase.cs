@@ -8,7 +8,7 @@ using System.Windows.Forms;
 using WindowsFormsApplication2.Native;
 
 namespace WindowsFormsApplication2.AreaRunner.PlayerParallelActions {
-    public abstract class PusherBase {
+    public abstract class PusherBase:IDisposable {
 
         class InstancePusherInfo : PusherInfo {
             public Timer Instance { get; set; }
@@ -30,7 +30,6 @@ namespace WindowsFormsApplication2.AreaRunner.PlayerParallelActions {
             timer.Tick += OnTick;
             timer.Start();
             ActivePushers.Add(new InstancePusherInfo() { AfterPush = pusherInfo.AfterPush, BeforePush = pusherInfo.BeforePush, Delay = pusherInfo.Delay, Code = pusherInfo.Code, Instance = timer });
-
         }
 
         private void OnTick(object sender, EventArgs e) {
@@ -46,5 +45,14 @@ namespace WindowsFormsApplication2.AreaRunner.PlayerParallelActions {
             }
         }
 
+        public void Dispose() {
+            foreach (var item in ActivePushers) {
+                item.Instance.Stop();
+                item.Instance.Tick -= OnTick;
+                item.Instance.Dispose();
+            }
+            ActivePushers.Clear();            
+            GC.SuppressFinalize(this);
+        }
     }
 }

@@ -12,6 +12,11 @@ using WindowsFormsApplication2.Native;
 namespace WindowsFormsApplication2.AreaRunner.InputScript {
     public abstract class InputScriptBase : ISupportLock {
 
+        protected static KeyWithModifier Ctrl_C = new KeyWithModifier() { Key = InputCodes.C, Modifier = InputCodes.LControlKey };
+        protected static KeyWithModifier Ctrl_V = new KeyWithModifier() { Key = InputCodes.V, Modifier = InputCodes.LControlKey };
+        protected static KeyWithModifier CallNewInstanceWindow = new KeyWithModifier() { Key = InputCodes.LButton, Modifier = InputCodes.LControlKey };
+        protected static string HideoutCommand = @"/hideout";
+
         private class FOR_INTERNAL_USE_ONLY : InputScriptBase {
             private readonly object func;
 
@@ -30,6 +35,8 @@ namespace WindowsFormsApplication2.AreaRunner.InputScript {
 
 
         public const int STANDART_DELAY = 150;
+        public const double MODIFIER = 1;
+
 
         protected class KeyWithModifier {
             public InputCodes Modifier { get; set; }
@@ -41,39 +48,38 @@ namespace WindowsFormsApplication2.AreaRunner.InputScript {
 
             public Queue<object> ScriptParts = new Queue<object>();
 
-            public void DoInput(Func<InputCodes> inputFunc, int afterDelay = STANDART_DELAY) {
-                    DoDelay(() => afterDelay);
+            public void DoInput(Func<InputCodes> inputFunc, double afterDelay = MODIFIER) {
+                DoDelay(() => afterDelay);
                 ScriptParts.Enqueue(inputFunc);
             }
 
-            public void DoDelay(Func<int> inputFunc) {
+            public void DoDelay(Func<double> inputFunc) {
                 ScriptParts.Enqueue(inputFunc);
             }
 
-            public void DoMouseMove(Func<Point> inputFuncXY, int afterDelay = STANDART_DELAY) {
-                    DoDelay(() => afterDelay);
+            public void DoMouseMove(Func<Point> inputFuncXY, double afterDelay = MODIFIER) {
+                DoDelay(() => afterDelay);
                 ScriptParts.Enqueue(inputFuncXY);
             }
 
-            public void DoMouseMoveWithClick(Func<Point> inputFuncXY, int afterDelay = STANDART_DELAY) {
-
+            public void DoMouseMoveWithClick(Func<Point> inputFuncXY, double afterDelay = MODIFIER) {
                 DoDelay(() => afterDelay);
                 ScriptParts.Enqueue(inputFuncXY);
                 DoInput(() => InputCodes.LButton);
             }
 
-            public void DoInputWithModifiers(Func<KeyWithModifier> inputWithModifiers, int afterDelay = STANDART_DELAY) {
-                    DoDelay(() => afterDelay);
+            public void DoInputWithModifiers(Func<KeyWithModifier> inputWithModifiers, double afterDelay = MODIFIER) {
+                DoDelay(() => afterDelay);
                 ScriptParts.Enqueue(inputWithModifiers);
             }
 
-            public void DoScript(Func<InputScriptBase> inputScript, int afterDelay = STANDART_DELAY) {
-                    DoDelay(() => afterDelay);
+            public void DoScript(Func<InputScriptBase> inputScript, double afterDelay = MODIFIER) {
+                DoDelay(() => afterDelay);
                 ScriptParts.Enqueue(inputScript);
             }
 
-            public void DoScriptPart(Func<object> inputPart, int afterDelay = STANDART_DELAY) {
-                    DoDelay(() => afterDelay);
+            public void DoScriptPart(Func<object> inputPart, double afterDelay = MODIFIER) {
+                DoDelay(() => afterDelay);
                 var someFunc = inputPart();
                 FOR_INTERNAL_USE_ONLY fOR_INTERNAL_USE_ONLY = new FOR_INTERNAL_USE_ONLY(someFunc);
                 DoScript(() => fOR_INTERNAL_USE_ONLY);
@@ -81,7 +87,7 @@ namespace WindowsFormsApplication2.AreaRunner.InputScript {
         }
 
         Script script;
-        event EventHandler Completed;
+        public event EventHandler Completed;
 
         public InputScriptBase() {
             script = StartRecord();
@@ -101,7 +107,7 @@ namespace WindowsFormsApplication2.AreaRunner.InputScript {
         }
 
         bool IsDelay(object obj) {
-            return obj is Func<int>;
+            return obj is Func<double>;
         }
 
         bool IsInput(object obj) {
@@ -145,8 +151,8 @@ namespace WindowsFormsApplication2.AreaRunner.InputScript {
             }
 
             if (IsDelay(func)) {
-                var scriptAction = (Func<int>)func;
-                var delay = scriptAction();
+                var scriptAction = (Func<double>)func;
+                var delay = (int)(scriptAction()* STANDART_DELAY * Settings.GlobalScriptDelayModifier);
                 timer.Interval = delay;
                 timer.Start();
                 return;

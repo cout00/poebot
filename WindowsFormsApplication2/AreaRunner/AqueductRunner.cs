@@ -14,12 +14,17 @@ namespace WindowsFormsApplication2.AreaRunner {
 
         }
 
+        public AqueductRunner():base() {
+
+        }
 
         protected override double MainAreaOrientation => 135;
 
         protected override double MaxAngle => 250;
 
         protected override double MinAngle => 10;
+
+        protected override int MaxAreaTime => 42000;
 
         protected override MapDirectionMoveInfo ProcessNextMarker(IEnumerable<MapDirectionMoveInfo> moveInfo) {
             if (!mapHistory.Any())
@@ -36,8 +41,6 @@ namespace WindowsFormsApplication2.AreaRunner {
                     return info;
                 }
             }
-            //logger.WriteLog($"no sol" + sorted.Last().Angle.ToString());
-            //return sorted.Last();
             return new MapDirectionMoveInfo() { Angle = median + 180, CenterAngle = -1 };
         }
     }

@@ -29,14 +29,14 @@ namespace WindowsFormsApplication2.AreaRunner {
 
     public abstract class AreaRunnerBase {
 
+        public event EventHandler AreaEnded;
+
         protected abstract double MainAreaOrientation { get; }
         const int MAX_HISTORY_LENGTH = 40;
-        const int CORRECTION_COOLDOWN = 3000;
         protected readonly ILogger logger;
         protected History<MapDirectionMoveInfo> fogHistory = new History<MapDirectionMoveInfo>();
         protected History<MapMoveInfo> mapHistory = new History<MapMoveInfo>();
 
-        //protected ActionLockerFactory actionLockerFactory;
         readonly LockObserver lockObserver = new LockObserver();
 
         protected GameMapFogProcessor gameMapFogProcessor = new GameMapFogProcessor();
@@ -47,13 +47,17 @@ namespace WindowsFormsApplication2.AreaRunner {
         protected FlaskPusher FlaskPusher = new FlaskPusher();
         protected SkillPusher SkillPusher = new SkillPusher();
 
-        public AreaRunnerBase(ILogger logger) {
+        int time = 0;
+
+        public AreaRunnerBase(ILogger logger):this() {            
+            this.logger = logger;
+        }
+
+        public AreaRunnerBase() {
             mapProcessor.OnResult += OnMapProcessorResult;
             gameMapFogProcessor.OnResult += OnFogResult;
             lootProcessor.OnResult += OnLootResult;
             lockObserver.Add(lootProcessor);
-            //actionLockerFactory = new ActionLockerFactory(logger);
-            this.logger = logger;
         }
 
         private void OnLootResult(object sender, ImageProcessorEventArgs<GameMapProcessorResult<LootMoveResult>> e) {
@@ -62,9 +66,7 @@ namespace WindowsFormsApplication2.AreaRunner {
                 return;
             var point = res.OrderBy(a => a.Vector.Length()).FirstOrDefault().LootCord;
             AvailableInput.MouseMove(point);
-            //AvailableInput.Input(Settings.MoveKey);
             AvailableInput.Input(InputCodes.LButton);
-
         }
 
         void AddToHistory<T>(List<HistoryElement<T>> history, HistoryElement<T> historyElement) where T : MoveInfoBase {
@@ -88,33 +90,10 @@ namespace WindowsFormsApplication2.AreaRunner {
             AddToMapHistory(new HistoryElement<MapMoveInfo>() { MoveInfos = vectors });
         }
 
-        //double FindMostPerspectiveAngle(IEnumerable<MapMoveInfo> moveInfo) {
-        //    var resultangle = moveInfo.OrderBy(a => a.Angle).FirstOrDefault().Angle; //exit
-        //    foreach (var info in moveInfo) {
-        //        var perspective = info.Angle;
-        //        for (int i = mapHistory.Count - 1; i >= mapHistory.Count / 2; i--) {
-        //            foreach (var angle in Extensions.AngleIterator(perspective.ToAngle(-90), perspective.ToAngle(90))) {
-        //                var vector = mapHistory[i].MoveInfos.FirstOrDefault(a => a.Angle == angle);
-        //                if (vector.IntersectionType == IntersectionType.NewAreaFlag) {
-        //                    resultangle = vector.Angle;
-        //                }
-        //            }
-        //        }
-        //    }
-        //    return resultangle;
-        //}
-
-        protected virtual void OnAreaCreated() {
-            //var point = NativeApiWrapper.GetScreenRotatedPoint((int)MainAreaOrientation);
-            ////tionLockerFactory.Wait(1000);
-            //window.Mouse.MoveTo(point.X, point.Y);
-            ////window.Mouse.ClickLeft();
-            //window.Keyboard.Press(Process.NET.Native.Types.Keys.Q);
-            //window.Mouse.MoveTo(point.X+100, point.Y);
-        }
 
         protected virtual void OnAreaEnded() {
-
+            Abort();
+            AreaEnded?.Invoke(this, new EventArgs());
         }
 
         protected abstract MapDirectionMoveInfo ProcessNextMarker(IEnumerable<MapDirectionMoveInfo> moveInfo);
@@ -123,7 +102,22 @@ namespace WindowsFormsApplication2.AreaRunner {
 
         protected abstract double MinAngle { get; }
 
+        protected abstract int MaxAreaTime { get; }
+
+        public void Abort() {
+            mapProcessor.OnResult -= OnMapProcessorResult;
+            gameMapFogProcessor.OnResult -= OnFogResult;
+            lootProcessor.OnResult -= OnLootResult;
+            gameMapFogProcessor.Dispose();
+            mapProcessor.Dispose();
+            lootProcessor.Dispose();
+            AttackPusher.Dispose();
+            FlaskPusher.Dispose();
+            SkillPusher.Dispose();
+        }
+
         void OnFogResult(object sender, ImageProcessorEventArgs<GameMapProcessorResult<MapDirectionMoveInfo>> e) {
+            time += NativeApiWrapper.StandartDelay;
             var calcRes = e.ImageProcessorResult.VectorizationResult.ToList();
             var itemsToRemove = calcRes.Where(a => a.Angle >= MaxAngle || a.Angle<=MinAngle).ToList();
             foreach (var item in itemsToRemove) {
@@ -132,10 +126,12 @@ namespace WindowsFormsApplication2.AreaRunner {
             AddToFogHistory(new HistoryElement<MapDirectionMoveInfo>() { MoveInfos = calcRes });
             if (!mapHistory.Any())
                 return;
-            if (mapHistory.Count == 1)
-                OnAreaCreated();
             if (lockObserver.Locked)
                 return;
+            if (time>MaxAreaTime) {
+                OnAreaEnded();
+                return;
+            }
             var mainAngle = MainAreaOrientation;
             IEnumerable<MapDirectionMoveInfo> vectorizationResult = null; ;
             if (!calcRes.Any()) {
@@ -154,22 +150,6 @@ namespace WindowsFormsApplication2.AreaRunner {
             var nextMarker = ProcessNextMarker(vectorizationResult);
             mainAngle = nextMarker.CenterAngle;
             AttackPusher.CenterAngle = nextMarker.CenterAngle;
-
-
-            //logger.WriteLog("perspective" + mainAngle.ToString());
-            //var vector = mapHistory.Last().MoveInfos.FirstOrDefault(a => a.Angle == mainAngle.ToAngle(90));
-            //var oppositeVector = mapHistory.Last().MoveInfos.FirstOrDefault(a => a.Angle == mainAngle.ToAngle(180 + 90));
-            //var vectorDistance = vector.Vector.Length();
-            //var oppositeVectorDistance = oppositeVector.Vector.Length();
-            //if (vectorDistance + oppositeVectorDistance < 5) {
-            //    mainAngle = mainAngle.ToAngle(180);
-            //    logger.WriteLog("if wrong" + mainAngle.ToString());
-            //}
-            //else {
-            //    var addSum = ((vectorDistance - oppositeVectorDistance) / (vectorDistance + oppositeVectorDistance)) * 90;
-            //    mainAngle = mainAngle + addSum;
-            //    logger.WriteLog("after correction" + mainAngle.ToString() + " at " + addSum.ToString());
-            //}
             var point = NativeApiWrapper.GetScreenRotatedPoint((int)mainAngle);
             AvailableInput.MouseMove(point);
             AvailableInput.Input(Settings.MoveKey);

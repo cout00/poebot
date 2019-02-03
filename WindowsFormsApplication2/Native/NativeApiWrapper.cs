@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WindowsFormsApplication2.AreaRunner.InputScript;
 using WindowsFormsApplication2.Parsers;
 using static WindowsFormsApplication2.Native.NativeAPI;
 
@@ -48,7 +49,8 @@ namespace WindowsFormsApplication2.Native {
                     shortCut.WorkingDirectory = GameFolder;
                     shortCut.Save();
                 }
-                System.Diagnostics.Process.Start(Path.Combine(GameFolder, "Client.lnk"));              
+                System.Diagnostics.Process.Start(Path.Combine(GameFolder, "Client.lnk"));
+                new GameRunScript().Run();
             }
             catch (Exception) {
                 
@@ -65,7 +67,7 @@ namespace WindowsFormsApplication2.Native {
             GameMainWindowHandle = process.MainWindowHandle;
             var processSharp = new ProcessSharp(process, MemoryType.Remote);
             GameWindow = processSharp.WindowFactory.MainWindow;
-            GameWindow.Activate();
+            GameWindow.Activate();            
         }
 
         static NativeApiWrapper() {            

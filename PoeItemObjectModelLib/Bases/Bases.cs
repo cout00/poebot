@@ -1589,7 +1589,7 @@ namespace PoeItemObjectModelLib.Bases {
             return name.ToString().Replace("_", " ").Replace("__", "\'").Replace("___", "-");
         }
 
-
+        
         public static ItemStatus ToStatus(this string name) {
             try {
                 return (ItemStatus)Enum.Parse(typeof(ItemStatus), name);

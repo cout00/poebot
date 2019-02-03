@@ -27,6 +27,7 @@ using Microsoft.Win32;
 using WindowsFormsApplication2.AreaRunner.InputScript;
 using PoeItemObjectModelLib;
 using WindowsFormsApplication2.Parsers;
+using WindowsFormsApplication2.Profile;
 
 namespace WindowsFormsApplication2 {
 
@@ -50,9 +51,11 @@ namespace WindowsFormsApplication2 {
         private void button1_Click(object sender, EventArgs e) {
 
 
-            NativeApiWrapper.RunGame();
-            GameRunScript gameRunScript = new GameRunScript();
-            gameRunScript.Run();
+            NativeApiWrapper.InitGameInstance();
+            RelogScript aqueducProfile = new RelogScript();
+            aqueducProfile.Run();
+            //ReturnToHideoutScript gameRunScript = new ReturnToHideoutScript();
+            //gameRunScript.Run();
             ////AqueductNewAreaScript aqueductNewAreaScript = new AqueductNewAreaScript();
             ////aqueductNewAreaScript.Run();
 

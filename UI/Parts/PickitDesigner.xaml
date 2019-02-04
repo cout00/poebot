@@ -1,0 +1,69 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:UI.Parts">
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+    <Style
+        x:Key="ButtonStyle"
+        BasedOn="{StaticResource MetroButton}"
+        TargetType="{x:Type Button}">
+        <Setter Property="Margin" Value="5,0,5,0" />
+        <Setter Property="CommandParameter" Value="{Binding DataContext, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Expander}}}" />
+    </Style>
+
+    <DataTemplate x:Key="Disable">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" MinWidth="30" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Margin="5,0,5,0" />
+            <Button
+                Grid.Column="1"
+                Command="{Binding DataContext.UpCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:PickitDesigner}}}"
+                Content="Up"
+                Style="{StaticResource ButtonStyle}" />
+            <Button
+                Grid.Column="2"
+                Command="{Binding DataContext.DownCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:PickitDesigner}}}"
+                Content="Down"
+                Style="{StaticResource ButtonStyle}" />
+            <Button
+                Grid.Column="3"
+                Command="{Binding DataContext.DeleteCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:PickitDesigner}}}"
+                Content="Delete"
+                Style="{StaticResource ButtonStyle}" />
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="Expanded" />
+
+
+    <Style TargetType="{x:Type local:PickitDesigner}">
+        <Setter Property="DataContext">
+            <Setter.Value>
+                <local:PickitViewModel />
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type local:PickitDesigner}">
+                    <ItemsControl ItemsSource="{Binding PickitFilters}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Expander ContentTemplate="{StaticResource Expanded}" HeaderTemplate="{StaticResource Disable}" />
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

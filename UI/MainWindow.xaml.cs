@@ -14,14 +14,20 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 using MahApps.Metro.Controls;
+using System.IO;
+using System.Net;
+
+using PoeItemObjectModelLib;
 
 namespace UI {
-    /// <summary>
-    /// Логика взаимодействия для MainWindow.xaml
-    /// </summary>
+
     public partial class MainWindow :MetroWindow {
+        
+
         public MainWindow() {
             InitializeComponent();
+            GamepediaApiHelper.CreateXmlDocument();
+
         }
     }
 }

@@ -4,67 +4,17 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:Mahapps="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="clr-namespace:UI.PickitModels"
+    xmlns:designer="clr-namespace:UI.Parts"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="MainWindow"
     Width="525"
     Height="350"
     ShowIconOnTitleBar="False"
     mc:Ignorable="d">
-    <Mahapps:MetroWindow.DataContext>
-        <local:PickitViewModel />
-    </Mahapps:MetroWindow.DataContext>
-
     <Mahapps:MetroWindow.Resources>
+        
 
-        <DataTemplate x:Key="Disable">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" MinWidth="30" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <TextBlock Margin="5,0,5,0" />
-                <Button
-                    Grid.Column="1"
-                    Margin="5,0,5,0"
-                    Command="{Binding DataContext.UpCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}"
-                    CommandParameter="{Binding}"
-                    Content="Up" />
-                <Button
-                    Grid.Column="2"
-                    Margin="5,0,5,0"
-                    Command="{Binding DataContext.DownCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}"
-                    CommandParameter="{Binding}"
-                    Content="Down" />
-                <Button
-                    Grid.Column="3"
-                    Margin="5,0,5,0"
-                    Command="{Binding DataContext.EditCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}"
-                    CommandParameter="{Binding}"
-                    Content="Edit" />
-                <Button
-                    Grid.Column="4"
-                    Margin="5,0,5,0"
-                    Command="{Binding DataContext.DeleteCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}"
-                    CommandParameter="{Binding}"
-                    Content="Delete" />
-            </Grid>
-        </DataTemplate>
-
-        <DataTemplate x:Key="Expanded" />
-
-        <DataTemplate x:Key="Active">
-            <ItemsControl>
-                <ContentPresenter ContentTemplate="{StaticResource Disable}" />
-                <ContentPresenter ContentTemplate="{StaticResource Expanded}" />
-            </ItemsControl>
-        </DataTemplate>
-
-
-        <Style x:Key="ItemStyle" TargetType="{x:Type ContentPresenter}">
+        <!--<Style x:Key="ItemStyle" TargetType="{x:Type ContentPresenter}">
             <Setter Property="ContentTemplate" Value="{StaticResource Disable}" />
             <Setter Property="Margin" Value="0,5,5,0" />
             <Style.Triggers>
@@ -72,19 +22,20 @@
                     <Setter Property="ContentTemplate" Value="{StaticResource Active}" />
                 </DataTrigger>
             </Style.Triggers>
-        </Style>
+        </Style>-->
     </Mahapps:MetroWindow.Resources>
     <Grid>
-        <ItemsControl ItemsSource="{Binding PickitFilters}">
+        <designer:PickitDesigner/>
+        <!--<ItemsControl ItemsSource="{Binding PickitFilters}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Grid>
-                        <Expander HeaderTemplate="{StaticResource Disable}" />
+                        <Expander ContentTemplate="{StaticResource Expanded}" HeaderTemplate="{StaticResource Disable}" />
                     </Grid>
                 </DataTemplate>
 
             </ItemsControl.ItemTemplate>
-        </ItemsControl>
+        </ItemsControl>-->
         <!--<ItemsControl ItemContainerStyle="{StaticResource ItemStyle}" ItemsSource="{Binding PickitFilters}" />-->
     </Grid>
 </Mahapps:MetroWindow>

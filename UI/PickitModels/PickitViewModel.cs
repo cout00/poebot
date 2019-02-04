@@ -12,7 +12,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace UI.PickitModels {
+namespace UI.Parts {
 
     
 
@@ -44,8 +44,7 @@ namespace UI.PickitModels {
         public ICommand DownCommand { get; set; }
         public ICommand UpCommand { get; set; }
         public ICommand SaveCommand { get; set; }
-        public ICommand CancelCommand { get; set; }
-        public ICommand EditCommand { get; set; }
+        public ICommand CancelCommand { get; set; }       
         public ICommand DeleteCommand { get; set; }
 
 
@@ -55,7 +54,6 @@ namespace UI.PickitModels {
             UpCommand = CreateCommand<PickitFilterViewModel>(CanUp, DoUp);
             SaveCommand = CreateCommand(CanSave, DoSave);
             CancelCommand = CreateCommand(CanCancel, DoCancel);
-            EditCommand = CreateCommand<PickitFilterViewModel>(CanEdit, DoEdit);
             DeleteCommand = CreateCommand<PickitFilterViewModel>(CanDelete, DoDelete);
 
             PickitFilters = new ObservableCollection<PickitFilterViewModel>();
@@ -75,11 +73,7 @@ namespace UI.PickitModels {
         bool CanUp(PickitFilterViewModel model) {
             return true;
         }
-
-        bool CanEdit(PickitFilterViewModel model) {
-            return !model.IsActive;
-        }
-
+        
         bool CanSave() {
             return true;
         }
@@ -116,10 +110,6 @@ namespace UI.PickitModels {
             PickitFilters.Remove(model);
         }
 
-        public void DoEdit(PickitFilterViewModel model) {
-            foreach (var viewModel in PickitFilters)
-                viewModel.IsActive = false;            
-            model.IsActive = true;
-        }
+        
     }
 }

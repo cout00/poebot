@@ -9,6 +9,28 @@ using System.Xml.Schema;
 using System.Xml.Serialization;
 
 namespace PoeItemObjectModelLib {
+
+    [Serializable]
+    public class PoePreloadedItem2 :IXmlSerializable {
+        public string Name { get; set; }
+        public string Class_ID { get; set; }
+        public string Rarity { get; set; }
+        public string Size_X { get; set; }
+        public string Size_Y { get; set; }
+
+        public XmlSchema GetSchema() {
+            return null;
+        }
+
+        public void ReadXml(XmlReader reader) {
+            var i = 1;
+        }
+
+        public void WriteXml(XmlWriter writer) {
+        }
+    }
+
+
     [Serializable]
     public class PoePreloadedItem : IXmlSerializable {
 

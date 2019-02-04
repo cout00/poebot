@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="Bases\Bases.cs" />
     <Compile Include="Class1.cs" />
+    <Compile Include="GamepediaApiHelper.cs" />
     <Compile Include="ItemBasePreloader.cs" />
     <Compile Include="ItemClassEvualator.cs" />
     <Compile Include="PoePreloadedItem.cs" />

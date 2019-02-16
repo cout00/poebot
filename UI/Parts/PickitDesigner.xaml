@@ -41,7 +41,9 @@
         </Grid>
     </DataTemplate>
 
-    <DataTemplate x:Key="Expanded" />
+    <DataTemplate x:Key="Expanded">
+        <ItemsControl />
+    </DataTemplate>
 
 
     <Style TargetType="{x:Type local:PickitDesigner}">

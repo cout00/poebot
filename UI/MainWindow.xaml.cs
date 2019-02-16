@@ -18,15 +18,15 @@ using System.IO;
 using System.Net;
 
 using PoeItemObjectModelLib;
+using PoeItemObjectModelLib.Elements;
 
 namespace UI {
 
     public partial class MainWindow :MetroWindow {
-        
-
         public MainWindow() {
             InitializeComponent();
-            GamepediaApiHelper.CreateXmlDocument();
+            ItemFactory factory = new ItemFactory();
+            var test = factory.GetModel();
 
         }
     }

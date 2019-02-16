@@ -43,11 +43,19 @@
   <ItemGroup>
     <Compile Include="Bases\Bases.cs" />
     <Compile Include="Class1.cs" />
+    <Compile Include="Currency.cs" />
+    <Compile Include="Elements\ItemElementParser.cs" />
+    <Compile Include="Elements\ItemHeaderElement.cs" />
+    <Compile Include="Elements\ItemSizeElement.cs" />
+    <Compile Include="Elements\StackedItemElement.cs" />
     <Compile Include="GamepediaApiHelper.cs" />
+    <Compile Include="Elements\IElementParser.cs" />
     <Compile Include="ItemBasePreloader.cs" />
     <Compile Include="ItemClassEvualator.cs" />
-    <Compile Include="PoePreloadedItem.cs" />
+    <Compile Include="PoePreloadedItem3.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Elements\QualtityElement.cs" />
+    <Compile Include="Elements\SocketedItemElement.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -12,7 +12,7 @@
     ShowIconOnTitleBar="False"
     mc:Ignorable="d">
     <Mahapps:MetroWindow.Resources>
-        
+
 
         <!--<Style x:Key="ItemStyle" TargetType="{x:Type ContentPresenter}">
             <Setter Property="ContentTemplate" Value="{StaticResource Disable}" />
@@ -25,7 +25,7 @@
         </Style>-->
     </Mahapps:MetroWindow.Resources>
     <Grid>
-        <designer:PickitDesigner/>
+        <designer:PickitDesigner />
         <!--<ItemsControl ItemsSource="{Binding PickitFilters}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>

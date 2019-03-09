@@ -114,6 +114,7 @@
     <Compile Include="Logger\ILogger.cs" />
     <Compile Include="Native\AvailableInput.cs" />
     <Compile Include="Native\Extensions.cs" />
+    <Compile Include="Native\GameInstance.cs" />
     <Compile Include="Native\NativeAPI.cs" />
     <Compile Include="Native\NativeApiWrapper.cs" />
     <Compile Include="Native\Settings.cs" />

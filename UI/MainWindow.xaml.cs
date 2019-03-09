@@ -27,6 +27,8 @@ namespace UI {
             InitializeComponent();
             ItemFactory factory = new ItemFactory();
             var test = factory.GetModel();
+            Pickit pickit=new Pickit();
+            var valid = pickit.IsValid(test);
 
         }
     }

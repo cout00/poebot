@@ -45,14 +45,19 @@ namespace WindowsFormsApplication2 {
         
         public Form1() {
             InitializeComponent();
+            var processes = System.Diagnostics.Process.GetProcessesByName("notepad").Where(a => a.MainWindowHandle != IntPtr.Zero);
+            comboBox1.DataSource = processes.ToList();
+            comboBox1.DisplayMember = "MainWindowHandle";
+            comboBox1.SelectedItem = processes.FirstOrDefault();
+            comboBox1.SelectedIndexChanged += comboBox1_SelectedIndexChanged;
         }
 
 
         private void button1_Click(object sender, EventArgs e) {
 
-            //AqueducProfile aqueducProfile = new AqueducProfile();
-            //aqueducProfile.Settings.Act = 10;
-            //aqueducProfile.RunSafe();
+            AqueducProfile aqueducProfile = new AqueducProfile();
+            aqueducProfile.Settings.Act = 10;
+            aqueducProfile.RunSafe();
 
             NativeApiWrapper.FlashByWindow(Handle);
 
@@ -99,6 +104,11 @@ namespace WindowsFormsApplication2 {
             AqueducProfile aqueducProfile = new AqueducProfile();
             aqueducProfile.Settings.Act = 9;
             aqueducProfile.RunSafe();
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e) {
+            var handle = comboBox1.SelectedItem as System.Diagnostics.Process;
+            NativeApiWrapper.FlashByWindow(handle.MainWindowHandle);
         }
     }
 }

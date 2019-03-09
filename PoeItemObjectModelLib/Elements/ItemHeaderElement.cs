@@ -17,7 +17,7 @@ namespace PoeItemObjectModelLib.Elements {
         
         public IItemBaseHeader ParseElement(string data) {
             var headerElements = Regex.Split(data, Environment.NewLine).RemoveEmpty();
-            Rarity = Regex.Replace(headerElements.First(), "Rarity: ", "").ToRarity();
+            Rarity = Regex.Replace(headerElements.First().Trim(), "Rarity: ", "").ToRarity();
             BaseName = Rarity == ItemRarity.Unique ? headerElements.ToList()[1] : headerElements.Last();
             var outItem = ItemBasePreloader.GetItem(BaseName);
             Class = outItem == null ? ItemClass.None : outItem.Class_ID;

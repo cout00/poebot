@@ -33,6 +33,16 @@ namespace WindowsFormsApplication2.Profile {
             relogScript.Run();
         }
 
+        public void RunSafe(System.Diagnostics.Process process) {
+            var logFileListener = new LogFileReader();
+            logFileListener.RegisterListener(GetListener());
+            NativeApiWrapper.InitGameInstance(process);
+            RelogScript relogScript = new RelogScript();
+            relogScript.Run();
+        }
+
+        //System.Diagnostics.Process process
+
         protected virtual void OnNewGameLocationData(string data) {
 
         }

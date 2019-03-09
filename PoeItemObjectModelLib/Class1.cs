@@ -45,18 +45,18 @@ namespace PoeItemObjectModelLib {
 
         public RarityEvualator RarityEvualator { get; }
         public ItemClassEvualator ItemClassEvualator { get; }
-        //public SpecificUniqueItemEvualator SpecificUniqueItemEvualator { get; }
+        public SpecificUniqueItemEvualator SpecificUniqueItemEvualator { get; }
 
         ICollection<IEvualator> Evualators = new List<IEvualator>();
 
         public PickitFilter() {
             RarityEvualator = new RarityEvualator();
             ItemClassEvualator = new ItemClassEvualator();
-            //SpecificUniqueItemEvualator = new SpecificUniqueItemEvualator();
+            SpecificUniqueItemEvualator = new SpecificUniqueItemEvualator();
 
             Evualators.Add(RarityEvualator);
             Evualators.Add(ItemClassEvualator);
-            //Evualators.Add(SpecificUniqueItemEvualator);
+            Evualators.Add(SpecificUniqueItemEvualator);
         }
 
         bool IEvualator.Evualate(IItem item) {
@@ -111,11 +111,11 @@ namespace PoeItemObjectModelLib {
         }
     }
 
-    //public class SpecificUniqueItemEvualator :Filter<IItemHeader> {
-    //    protected override bool Evualate(IItemHeader item) {
-    //        return Elements.Any(a => a.Rarity == ItemRarity.Unique && a.Name == item.Name);
-    //    }
-    //}
+    public class SpecificUniqueItemEvualator :Filter<IItemBaseHeader> {
+        protected override bool Evualate(IItemBaseHeader item) {
+            return Elements.Any(a => a.Rarity == ItemRarity.Unique && a.BaseName == item.BaseName);
+        }
+    }
 
 
     public class Pickit {
@@ -123,14 +123,33 @@ namespace PoeItemObjectModelLib {
         public ICollection<PickitFilter> PickitFilters { get; }
 
         public Pickit() {
-            //PickitFilters = new List<PickitFilter>();
-            //PickitFilter filter = new PickitFilter();
-            //filter.RarityEvualator.IsActive = true;
-            //ItemHeader itemHeader = new ItemHeader();
-            //itemHeader.Class = ItemClass.DivinationCard;
-            //filter.ItemClassEvualator.Elements.Add(itemHeader);
-            //filter.ItemClassEvualator.IsActive = true;
-            //PickitFilters.Add(filter);
+            PickitFilters = new List<PickitFilter>();
+
+            PickitFilter divCardFilter = new PickitFilter();
+            divCardFilter.Destination=Destination.Keep;
+            divCardFilter.RarityEvualator.IsActive = false;
+            ItemHeaderElement divCardHeader = new ItemHeaderElement();
+            divCardHeader.Class = ItemClass.DivinationCard;
+            divCardFilter.ItemClassEvualator.Elements.Add(divCardHeader);
+            divCardFilter.ItemClassEvualator.IsActive = true;
+
+            PickitFilter uniqueItemFilter=new PickitFilter();
+            uniqueItemFilter.Destination=Destination.Keep;
+            uniqueItemFilter.RarityEvualator.IsActive = true;
+            ItemHeaderElement uniqueItemElement=new ItemHeaderElement();
+            uniqueItemElement.Rarity=ItemRarity.Unique;
+            uniqueItemFilter.RarityEvualator.Elements.Add(uniqueItemElement);
+
+            PickitFilter currencyItemFilter=new PickitFilter();
+            currencyItemFilter.Destination=Destination.Keep;
+            currencyItemFilter.RarityEvualator.IsActive = true;
+            ItemHeaderElement currencyElement = new ItemHeaderElement();
+            currencyElement.Rarity = ItemRarity.Currency;
+            currencyItemFilter.RarityEvualator.Elements.Add(currencyElement);
+
+            PickitFilters.Add(divCardFilter);
+            PickitFilters.Add(uniqueItemFilter);
+            PickitFilters.Add(currencyItemFilter);
         }
 
         public bool IsValid(IItem item) {
@@ -197,11 +216,14 @@ namespace PoeItemObjectModelLib {
                             .Assign(itemSize)
                             .Assign(itemStatus);
                     }
-
                     if (itemHeader.Class==ItemClass.Map) {
 
                     }
-                    return null;
+                    return new PoeAnyItem().
+                        Assign(itemHeader)
+                        .Assign(itemSize)
+                        .Assign(itemStatus);
+
                 } else {
                     return null;
                 }
@@ -242,6 +264,10 @@ namespace PoeItemObjectModelLib {
             }
             return this;
         }
+    }
+
+    public class PoeAnyItem : ItemModel {
+        
     }
 
     
@@ -322,26 +348,6 @@ namespace PoeItemObjectModelLib {
         int Tier { get; set; }
     }
 
-    ////    Rarity: Rare
-    ////Loath Spiral
-    ////Coral Ring
-    ////--------
-    ////Requirements:
-    ////Level: 47
-    ////--------
-    ////Item Level: 62
-    ////--------
-    ////+21 to maximum Life
-    ////--------
-    ////+30 to Strength
-    ////Adds 11 to 24 Fire Damage to Attacks
-    ////Adds 1 to 27 Lightning Damage to Attacks
-    ////+133 to Accuracy Rating
-    ////+35 to maximum Energy Shield
-    ////+12 Life gained on Kill
-    ////--------
-    ////Corrupted
-    ////--------
-    ////Note: ~price 2 chaos
+
 
 }

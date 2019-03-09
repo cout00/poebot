@@ -32,7 +32,7 @@ namespace WindowsFormsApplication2.Profile {
                 }
                 return _settingsElements;
             }
-            private set => _settingsElements = value;
+            private set { _settingsElements = value; }
         }
 
         List<GetPropertyDescriptor> UpdatePropertyTriggers = new List<GetPropertyDescriptor>();

@@ -71,6 +71,13 @@ namespace WindowsFormsApplication2.Native {
             GameWindow.Activate();            
         }
 
+        public static void InitGameInstance(System.Diagnostics.Process process) {
+            GameMainWindowHandle = process.MainWindowHandle;
+            var processSharp = new ProcessSharp(process, MemoryType.Remote);
+            GameWindow = processSharp.WindowFactory.MainWindow;
+            GameWindow.Activate();
+        }
+
         static NativeApiWrapper() {            
             
             string InstallPath = (string)Registry.GetValue(@"HKEY_CURRENT_USER\Software\GrindingGearGames\Path of Exile", "InstallLocation", null);

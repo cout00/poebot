@@ -11,7 +11,13 @@ namespace WindowsFormsApplication2.AreaRunner.PlayerParallelActions {
             PusherInfo pusherSkill5 = new PusherInfo();
             pusherSkill5.Code = Settings.Skill5;
             pusherSkill5.Delay = Settings.Skill5Delay;
+
+            PusherInfo pusherSkill4 = new PusherInfo();
+            pusherSkill4.Code = Settings.Skill4;
+            pusherSkill4.Delay = Settings.Skill4Delay;
+
             CreatePusher(pusherSkill5);
+            CreatePusher(pusherSkill4);
         }
     }
 }

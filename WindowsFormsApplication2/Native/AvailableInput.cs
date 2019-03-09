@@ -212,9 +212,9 @@ namespace WindowsFormsApplication2.Native {
 
     public static class AvailableInput {
 
-        static IKeyboard Keyboard { get; set; }
-        static IMouse Mouse { get; set; }
-        static InputSimulator InputSimulator { get; set; }
+        internal static IKeyboard Keyboard { get; set; }
+        internal static IMouse Mouse { get; set; }
+        internal static InputSimulator InputSimulator { get; set; }
 
         static bool IsMouseInput(InputCodes code) {
             return code == InputCodes.LButton || code == InputCodes.RButton || code == InputCodes.MButton;
@@ -224,7 +224,7 @@ namespace WindowsFormsApplication2.Native {
             return (Keys)Enum.ToObject(typeof(Keys), (int)code);
         }
 
-        static VirtualKeyCode InputToVirtualKeyCode(InputCodes code) {
+        internal static VirtualKeyCode InputToVirtualKeyCode(InputCodes code) {
             return (VirtualKeyCode)Enum.ToObject(typeof(VirtualKeyCode), (int)code);
         }
 
@@ -244,8 +244,8 @@ namespace WindowsFormsApplication2.Native {
         }
 
         public static void Input(InputCodes code) {
-            //if (!NativeApiWrapper.GameWindow.IsActivated)
-            //    return;            
+            if (!NativeApiWrapper.GameWindow.IsActivated)
+                return;
             if (IsMouseInput(code)) {
                 if (code == InputCodes.LButton) {
                     Mouse.ClickLeft();
@@ -263,8 +263,8 @@ namespace WindowsFormsApplication2.Native {
         }
 
         public static void MouseMove(Point point) {
-            //if (!NativeApiWrapper.GameWindow.IsActivated)
-            //    return;
+            if (!NativeApiWrapper.GameWindow.IsActivated)
+                return;
             Mouse.MoveTo(point.X, point.Y);
         }
 

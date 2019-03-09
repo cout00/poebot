@@ -10,6 +10,17 @@ namespace WindowsFormsApplication2.Native
 {
     static class NativeAPI
     {
+        [StructLayout(LayoutKind.Sequential)]
+        public struct FLASHWINFO {
+            public uint cbSize;
+            public IntPtr hwnd;
+            public uint dwFlags;
+            public uint uCount;
+            public uint dwTimeout;
+        }
+
+
+
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
@@ -38,7 +49,9 @@ namespace WindowsFormsApplication2.Native
         [DllImport("user32", ExactSpelling = true, SetLastError = true)]
         internal static extern int MapWindowPoints(IntPtr hWndFrom, IntPtr hWndTo, [In, Out] ref System.Drawing.Point pt, [MarshalAs(UnmanagedType.U4)] int cPoints);
 
-
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool FlashWindowEx(ref FLASHWINFO pwfi);
 
     }
 }

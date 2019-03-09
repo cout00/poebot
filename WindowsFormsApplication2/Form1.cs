@@ -50,12 +50,15 @@ namespace WindowsFormsApplication2 {
 
         private void button1_Click(object sender, EventArgs e) {
 
+            //AqueducProfile aqueducProfile = new AqueducProfile();
+            //aqueducProfile.Settings.Act = 10;
+            //aqueducProfile.RunSafe();
 
-            NativeApiWrapper.InitGameInstance();
-            RelogScript aqueducProfile = new RelogScript();
-            aqueducProfile.Run();
-            //ReturnToHideoutScript gameRunScript = new ReturnToHideoutScript();
-            //gameRunScript.Run();
+            NativeApiWrapper.FlashByWindow(Handle);
+
+            //NativeApiWrapper.InitGameInstance();
+            //HideoutTradeScript aqueductNewAreFromTenAct = new HideoutTradeScript();
+            //aqueductNewAreFromTenAct.Run();
             ////AqueductNewAreaScript aqueductNewAreaScript = new AqueductNewAreaScript();
             ////aqueductNewAreaScript.Run();
 
@@ -73,11 +76,11 @@ namespace WindowsFormsApplication2 {
         }
 
         private void LogFileReader_NewData(object sender, string e) {
-            richTextBox1.Text += e;
+            //richTextBox1.Text += e;
         }
 
         private void OnResult(object sender, ImageProcessorEventArgs<GameMapProcessorResult<LootMoveResult>> e) {
-            pictureBox1.Image = e.ImageProcessorResult.ResultBitmap;
+            //pictureBox1.Image = e.ImageProcessorResult.ResultBitmap;
         }
 
         private void tableLayoutPanel1_Paint(object sender, PaintEventArgs e) {
@@ -89,7 +92,13 @@ namespace WindowsFormsApplication2 {
         }
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e) {
-            pictureBox1.Image = (Bitmap)listBox1.SelectedValue;
+            //pictureBox1.Image = (Bitmap)listBox1.SelectedValue;
+        }
+
+        private void button1_Click_1(object sender, EventArgs e) {
+            AqueducProfile aqueducProfile = new AqueducProfile();
+            aqueducProfile.Settings.Act = 9;
+            aqueducProfile.RunSafe();
         }
     }
 }

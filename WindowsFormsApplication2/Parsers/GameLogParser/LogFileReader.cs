@@ -63,6 +63,7 @@ namespace WindowsFormsApplication2.Parsers {
                 Luxurious_Hideout,
                 Overgrown_Hideout,
                 Unearthed_Hideout,
+                Undercity_Hideout,
                 Immaculate_Hideout);
         }
     }

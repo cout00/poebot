@@ -32,7 +32,7 @@ namespace WindowsFormsApplication2.AreaRunner {
         public event EventHandler AreaEnded;
 
         protected abstract double MainAreaOrientation { get; }
-        const int MAX_HISTORY_LENGTH = 40;
+        const int MAX_HISTORY_LENGTH = 500;
         protected readonly ILogger logger;
         protected History<MapDirectionMoveInfo> fogHistory = new History<MapDirectionMoveInfo>();
         protected History<MapMoveInfo> mapHistory = new History<MapMoveInfo>();

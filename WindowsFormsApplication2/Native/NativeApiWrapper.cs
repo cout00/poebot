@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using WindowsFormsApplication2.AreaRunner.InputScript;
@@ -18,7 +19,7 @@ using static WindowsFormsApplication2.Native.NativeAPI;
 namespace WindowsFormsApplication2.Native {
     public static class NativeApiWrapper {
         public static IntPtr GameMainWindowHandle;
-        public const string GameProcessName = "PathOfExile";
+        public const string GameProcessName = "PathOfExile_x64";
         public const double AngleStep = 22.5d;
         public const int StandartDelay = 200;
         public static string GameFolder;
@@ -87,6 +88,16 @@ namespace WindowsFormsApplication2.Native {
             return new Rectangle(point, new Size(windowRect.Width, windowRect.Height));
         }
 
+        public static void FlashByWindow(IntPtr hwnd) {
+            FLASHWINFO fLASHWINFO = new FLASHWINFO();
+            fLASHWINFO.hwnd = hwnd;
+            fLASHWINFO.cbSize = Convert.ToUInt32(Marshal.SizeOf(fLASHWINFO));
+            fLASHWINFO.dwFlags = 3;
+            fLASHWINFO.uCount = 3;
+            fLASHWINFO.dwTimeout = 0;
+            FlashWindowEx(ref fLASHWINFO);
+        }
+
         public static Point ClientToScreen() {
             Point result = new Point();
             NativeAPI.ClientToScreen(GameMainWindowHandle, ref result);
@@ -122,7 +133,7 @@ namespace WindowsFormsApplication2.Native {
 
         public static Point GetScreenRotatedPoint(int angle) {
             var playerCord = PlayerLocalCord;
-            var offset = 200;
+            var offset = 240;
             return RotatePoint1(new Point(playerCord.X + offset, playerCord.Y), playerCord, 360 - angle);
         }
 

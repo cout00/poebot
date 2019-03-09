@@ -47,7 +47,7 @@ namespace WindowsFormsApplication2.Parsers {
             { ConfigKeys.use_bound_skill7, "52" },
             { ConfigKeys.use_bound_skill8, "53" },
             { ConfigKeys.use_flask_in_slot1, "81" },
-            { ConfigKeys.use_flask_in_slot2, "97" },
+            { ConfigKeys.use_flask_in_slot2, "87" },
             { ConfigKeys.use_flask_in_slot3, "69" },
             { ConfigKeys.use_flask_in_slot4, "82" },
             { ConfigKeys.use_flask_in_slot5, "84" },
@@ -56,6 +56,7 @@ namespace WindowsFormsApplication2.Parsers {
             { ConfigKeys.minimap_geometry_alpha, "0" },
             { ConfigKeys.minimap_walkability_alpha, "1" },
             { ConfigKeys.minimap_zoom, "5" },
+            { ConfigKeys.attack_in_place, "16" },
 
         };
 
@@ -101,7 +102,8 @@ namespace WindowsFormsApplication2.Parsers {
             use_temporary_skill2,
             minimap_geometry_alpha,
             minimap_walkability_alpha,
-            minimap_zoom
+            minimap_zoom,
+            attack_in_place
         }
         string path;
         public ConfigParser() {
@@ -117,9 +119,7 @@ namespace WindowsFormsApplication2.Parsers {
                 var key = avialKeys.FirstOrDefault(a => (allStrings[i] + "=").Contains(a + "="));
                 if (key != null) {                    
                     var value = allStrings[i].Replace(key + "=", string.Empty);
-                    var resKey = (ConfigKeys)Enum.Parse(typeof(ConfigKeys), key);
-                    if (resKey==ConfigKeys.username)
-                        continue;                    
+                    var resKey = (ConfigKeys)Enum.Parse(typeof(ConfigKeys), key);              
                     var dicValue = config[resKey];
                     if (value!=dicValue) {
                         return false;

@@ -26,12 +26,13 @@ namespace WindowsFormsApplication2.Native {
 
         public static int Flask1Delay { get; } = 6000;
         public static int Flask2Delay { get; } = 4000;
-        public static int Flask3Delay { get; } = 7000;
-        public static int Flask4Delay { get; } = 3000;
+        public static int Flask3Delay { get; } = 5000;
+        public static int Flask4Delay { get; } = 5000;
         public static int Flask5Delay { get; } = 3000;
 
 
         public static int Skill5Delay { get; } = 4000;
+        public static int Skill4Delay { get; } = 4000;
 
         public static InputCodes Skill1 { get; } = InputCodes.LButton;
         public static InputCodes Skill2 { get; } = InputCodes.MButton;
@@ -41,8 +42,12 @@ namespace WindowsFormsApplication2.Native {
         public static InputCodes Skill6 { get; } = InputCodes.D3;
         public static InputCodes Skill7 { get; } = InputCodes.D4;
         public static InputCodes Skill8 { get; } = InputCodes.D5;
+        public static InputCodes AttackInPlace { get; } = InputCodes.LShiftKey;
 
-        public static int AttackDelay { get; } = 1500;
+        public static int AttackDelay { get; } = 1200;
         public static double GlobalScriptDelayModifier { get; } = 1;
+        public static bool UpGems { get; } = true;
+        public static bool IS_DEBUG_SELLING { get; } = true;
+
     }
 }

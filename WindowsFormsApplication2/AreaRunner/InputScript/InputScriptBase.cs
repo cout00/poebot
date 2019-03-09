@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -87,6 +88,9 @@ namespace WindowsFormsApplication2.AreaRunner.InputScript {
         }
 
         Script script;
+        Func<bool> validationPredicate;
+
+        [Obsolete("Use DoAfter")]
         public event EventHandler Completed;
 
         public InputScriptBase() {
@@ -95,7 +99,18 @@ namespace WindowsFormsApplication2.AreaRunner.InputScript {
 
         public bool Locked { get; set; }
 
-        protected abstract Script StartRecord();
+        
+        protected virtual void DoRecord(Script script) {
+
+        }
+
+        [Obsolete][EditorBrowsable(EditorBrowsableState.Never)]
+        protected virtual Script StartRecord() {
+            var script = new Script();
+            DoRecord(script);
+            return script;            
+        }
+
 
         public void Run() {
             if (script == null)
@@ -104,6 +119,16 @@ namespace WindowsFormsApplication2.AreaRunner.InputScript {
             timer.Tick += TimerTick;
             Locked = true;
             TimerTick(timer, null);
+        }
+
+
+
+        public void Validate(Func<bool> validationPredicate) {
+            this.validationPredicate = validationPredicate;
+        }
+
+        public void DoAfter(Action afterAction) {
+            Completed += (s, e) => afterAction();
         }
 
         bool IsDelay(object obj) {
@@ -152,7 +177,7 @@ namespace WindowsFormsApplication2.AreaRunner.InputScript {
 
             if (IsDelay(func)) {
                 var scriptAction = (Func<double>)func;
-                var delay = (int)(scriptAction()* STANDART_DELAY * Settings.GlobalScriptDelayModifier);
+                var delay = (int)(scriptAction() * STANDART_DELAY * Settings.GlobalScriptDelayModifier);
                 timer.Interval = delay;
                 timer.Start();
                 return;
@@ -178,10 +203,17 @@ namespace WindowsFormsApplication2.AreaRunner.InputScript {
             Stop(timer);
         }
 
-        private void Stop(Timer timer) {
+        void Stop(Timer timer) {
             timer.Stop();
             timer.Dispose();
             Locked = false;
+            if (validationPredicate != null) {
+                if (validationPredicate())
+                    Completed?.Invoke(this, null);
+                else
+                    Run();
+                return;
+            }
             Completed?.Invoke(this, null);
         }
     }

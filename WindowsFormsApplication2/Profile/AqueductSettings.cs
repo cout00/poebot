@@ -9,6 +9,7 @@ namespace WindowsFormsApplication2.Profile {
 
 
         public override void ApplySettings() {
+            base.ApplySettings();                
             foreach (var item in SettingsElements) {
                 if (item.Key==nameof(Act)) {
                     Act = (int)item.Value;

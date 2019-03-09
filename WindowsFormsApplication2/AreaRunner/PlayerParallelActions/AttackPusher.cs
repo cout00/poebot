@@ -17,6 +17,10 @@ namespace WindowsFormsApplication2.AreaRunner.PlayerParallelActions {
                 }
                 var point = NativeApiWrapper.GetScreenRotatedPoint((int)CenterAngle);
                 AvailableInput.MouseMove(point);
+                AvailableInput.InputSimulator.Keyboard.KeyDown(AvailableInput.InputToVirtualKeyCode(Settings.AttackInPlace));
+            };
+            pusherInfo.AfterPush = () => {
+                AvailableInput.InputSimulator.Keyboard.KeyUp(AvailableInput.InputToVirtualKeyCode(Settings.AttackInPlace));
             };
             pusherInfo.Code = Settings.MainAttack;
             pusherInfo.Delay = Settings.AttackDelay;

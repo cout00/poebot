@@ -39,11 +39,20 @@ namespace WindowsFormsApplication2.Profile {
 
         public ProfileSetting() {
             SettingsElements = new List<SettingsElement>();
+            UpdatePropertyTriggers.Add(new GetPropertyDescriptor() { Available = Enumerable.Range(1, 10), Key = nameof(MaxRunCountBeforeSellItems), SettingsName = "Max run count before sell items", Value = () => MaxRunCountBeforeSellItems });
             InitSettings(UpdatePropertyTriggers);
         }
 
+        public int MaxRunCountBeforeSellItems { get; set; }
+
         protected abstract void InitSettings(List<GetPropertyDescriptor> properties);
 
-        public abstract void ApplySettings();
+        public virtual void ApplySettings() {
+            foreach (var item in SettingsElements) {
+                if (item.Key == nameof(MaxRunCountBeforeSellItems)) {
+                    MaxRunCountBeforeSellItems = (int)item.Value;
+                }
+            }
+        }
     }
 }

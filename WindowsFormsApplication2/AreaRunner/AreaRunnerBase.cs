@@ -41,7 +41,7 @@ namespace WindowsFormsApplication2.AreaRunner {
 
         protected GameMapFogProcessor gameMapFogProcessor = new GameMapFogProcessor();
         protected GameMapProcessor mapProcessor = new GameMapProcessor();
-        protected LootProcessor lootProcessor = new LootProcessor();
+        protected LootProcessor2 lootProcessor = new LootProcessor2();
 
         protected AttackPusher AttackPusher = new AttackPusher();
         protected FlaskPusher FlaskPusher = new FlaskPusher();
@@ -49,7 +49,7 @@ namespace WindowsFormsApplication2.AreaRunner {
 
         int time = 0;
 
-        public AreaRunnerBase(ILogger logger):this() {            
+        public AreaRunnerBase(ILogger logger) : this() {
             this.logger = logger;
         }
 
@@ -64,9 +64,17 @@ namespace WindowsFormsApplication2.AreaRunner {
             var res = e.ImageProcessorResult.VectorizationResult;
             if (!res.Any())
                 return;
-            var point = res.OrderBy(a => a.Vector.Length()).FirstOrDefault().LootCord;
-            AvailableInput.MouseMove(point);
-            AvailableInput.Input(InputCodes.LButton);
+            if (res.FirstOrDefault().IsLootEndPoint) {
+                var point = res.OrderBy(a => a.Vector.Length()).FirstOrDefault().LootCord;
+                AvailableInput.MouseMove(point);
+                AvailableInput.Input(InputCodes.LButton);
+            }
+            else {
+                var angle = res.OrderBy(a => a.Vector.Length()).FirstOrDefault().Angle;
+                var point = NativeApiWrapper.GetScreenRotatedPoint((int)angle);
+                AvailableInput.MouseMove(point);
+                AvailableInput.Input(Settings.MoveKey);
+            }
         }
 
         void AddToHistory<T>(List<HistoryElement<T>> history, HistoryElement<T> historyElement) where T : MoveInfoBase {
@@ -119,7 +127,7 @@ namespace WindowsFormsApplication2.AreaRunner {
         void OnFogResult(object sender, ImageProcessorEventArgs<GameMapProcessorResult<MapDirectionMoveInfo>> e) {
             time += NativeApiWrapper.StandartDelay;
             var calcRes = e.ImageProcessorResult.VectorizationResult.ToList();
-            var itemsToRemove = calcRes.Where(a => a.Angle >= MaxAngle || a.Angle<=MinAngle).ToList();
+            var itemsToRemove = calcRes.Where(a => a.Angle >= MaxAngle || a.Angle <= MinAngle).ToList();
             foreach (var item in itemsToRemove) {
                 calcRes.Remove(item);
             }
@@ -128,7 +136,7 @@ namespace WindowsFormsApplication2.AreaRunner {
                 return;
             if (lockObserver.Locked)
                 return;
-            if (time>MaxAreaTime) {
+            if (time > MaxAreaTime) {
                 OnAreaEnded();
                 return;
             }

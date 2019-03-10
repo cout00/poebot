@@ -24,7 +24,7 @@ namespace WindowsFormsApplication2.AreaRunner {
 
         protected override double MinAngle => 10;
 
-        protected override int MaxAreaTime => 100000;
+        protected override int MaxAreaTime => 80000;
 
         protected override MapDirectionMoveInfo ProcessNextMarker(IEnumerable<MapDirectionMoveInfo> moveInfo) {
             if (!mapHistory.Any())

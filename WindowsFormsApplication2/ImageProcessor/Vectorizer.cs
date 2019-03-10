@@ -31,6 +31,7 @@ namespace WindowsFormsApplication2.ImageProcessor {
 
     public class LootMoveResult:MoveInfoBase {
         public Point LootCord { get; set; }
+        public bool IsLootEndPoint { get; set; }
     }
 
     public static class Vectorizer {

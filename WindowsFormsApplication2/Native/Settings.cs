@@ -44,7 +44,7 @@ namespace WindowsFormsApplication2.Native {
         public static InputCodes Skill8 { get; } = InputCodes.D5;
         public static InputCodes AttackInPlace { get; } = InputCodes.LShiftKey;
 
-        public static int AttackDelay { get; } = 1200;
+        public static int AttackDelay { get; } = 900;
         public static double GlobalScriptDelayModifier { get; } = 1;
         public static bool UpGems { get; } = true;
         public static bool IS_DEBUG_SELLING { get; } = true;

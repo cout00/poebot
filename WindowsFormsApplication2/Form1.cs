@@ -45,7 +45,7 @@ namespace WindowsFormsApplication2 {
         
         public Form1() {
             InitializeComponent();
-            var processes = System.Diagnostics.Process.GetProcessesByName("notepad").Where(a => a.MainWindowHandle != IntPtr.Zero);
+            var processes = System.Diagnostics.Process.GetProcessesByName(NativeApiWrapper.GameProcessName).Where(a => a.MainWindowHandle != IntPtr.Zero);
             comboBox1.DataSource = processes.ToList();
             comboBox1.DisplayMember = "MainWindowHandle";
             comboBox1.SelectedItem = processes.FirstOrDefault();
@@ -57,9 +57,7 @@ namespace WindowsFormsApplication2 {
 
             AqueducProfile aqueducProfile = new AqueducProfile();
             aqueducProfile.Settings.Act = 10;
-            aqueducProfile.RunSafe();
-
-            NativeApiWrapper.FlashByWindow(Handle);
+            aqueducProfile.RunSafe(comboBox1.SelectedItem as System.Diagnostics.Process);
 
             //NativeApiWrapper.InitGameInstance();
             //HideoutTradeScript aqueductNewAreFromTenAct = new HideoutTradeScript();
@@ -103,12 +101,29 @@ namespace WindowsFormsApplication2 {
         private void button1_Click_1(object sender, EventArgs e) {
             AqueducProfile aqueducProfile = new AqueducProfile();
             aqueducProfile.Settings.Act = 9;
-            aqueducProfile.RunSafe();
+            aqueducProfile.RunSafe(comboBox1.SelectedItem as System.Diagnostics.Process);
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e) {
             var handle = comboBox1.SelectedItem as System.Diagnostics.Process;
             NativeApiWrapper.FlashByWindow(handle.MainWindowHandle);
+        }
+        LootProcessor2 lootProcessor2;
+
+        private void button2_Click(object sender, EventArgs e) {
+            NativeApiWrapper.InitGameInstance(comboBox1.SelectedItem as System.Diagnostics.Process);
+            lootProcessor2 = new LootProcessor2();
+            lootProcessor2.OnResult += LootProcessor2_OnResult;
+        }
+
+        private void LootProcessor2_OnResult(object sender, ImageProcessorEventArgs<GameMapProcessorResult<LootMoveResult>> e) {
+            if (string.IsNullOrEmpty(BMin.Text) || string.IsNullOrEmpty(GMin.Text) || string.IsNullOrEmpty(RMin.Text) || string.IsNullOrEmpty(BMax.Text) || string.IsNullOrEmpty(GMax.Text) || string.IsNullOrEmpty(RMax.Text)) {
+                return;
+            }
+            //e.ImageProcessorResult.ResultBitmap.Save("test.bmp");
+            lootProcessor2.bgrMin = new Bgr(int.Parse(BMin.Text), int.Parse(GMin.Text), int.Parse(RMin.Text));
+            lootProcessor2.bgrMax = new Bgr(int.Parse(BMax.Text), int.Parse(GMax.Text), int.Parse(RMax.Text));
+            pictureBox1.Image = e.ImageProcessorResult.ResultBitmap;
         }
     }
 }

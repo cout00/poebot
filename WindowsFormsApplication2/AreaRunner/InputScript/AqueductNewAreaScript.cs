@@ -201,14 +201,16 @@ namespace WindowsFormsApplication2.AreaRunner.InputScript {
                     capturedPoints.Enqueue(new Point(X, Y));
                     script.DoMouseMove(() => {
                         return capturedPoints.Dequeue();
-                    }, 0.1);
-                    script.DoInputWithModifiers(() => Ctrl_C, 0.1);
+                    }, 0.2);
+                    script.DoInputWithModifiers(() => Ctrl_C, 0.2);
                     script.DoScriptPart(() => {
-                        if (TempPickit.Validate()) {
+                        if (!TempPickit.Validate()) {
+                            Console.WriteLine("not valid");
                             return (Func<KeyWithModifier>)(() => new KeyWithModifier() { Key = InputCodes.LButton, Modifier = InputCodes.LControlKey });
                         }
+                        Console.WriteLine("valid");
                         return null;
-                    }, 0.1);
+                    }, 0.2);
                 }
             }
             script.DoMouseMove(() => new Point(75, 486), 3);

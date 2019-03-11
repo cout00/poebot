@@ -81,11 +81,9 @@ namespace WindowsFormsApplication2.AreaRunner.InputScript {
 
             public void DoScriptPart(Func<object> inputPart, double afterDelay = MODIFIER) {
                 DoDelay(() => afterDelay);
-                if(inputPart==null)
-                    return;                
-                var someFunc = inputPart();
-                FOR_INTERNAL_USE_ONLY fOR_INTERNAL_USE_ONLY = new FOR_INTERNAL_USE_ONLY(someFunc);
-                DoScript(() => fOR_INTERNAL_USE_ONLY);
+                if (inputPart == null)
+                    return;
+                ScriptParts.Enqueue(inputPart);
             }
         }
 
@@ -101,16 +99,16 @@ namespace WindowsFormsApplication2.AreaRunner.InputScript {
 
         public bool Locked { get; set; }
 
-        
+
         protected virtual void DoRecord(Script script) {
 
         }
 
-        [Obsolete][EditorBrowsable(EditorBrowsableState.Never)]
+        [Obsolete] [EditorBrowsable(EditorBrowsableState.Never)]
         protected virtual Script StartRecord() {
             var script = new Script();
             DoRecord(script);
-            return script;            
+            return script;
         }
 
 
@@ -150,6 +148,10 @@ namespace WindowsFormsApplication2.AreaRunner.InputScript {
 
         bool IsScript(object obj) {
             return obj is Func<InputScriptBase>;
+        }
+
+        bool IsPart(object obj) {
+            return obj is Func<object>;
         }
 
         void TimerTick(object sender, EventArgs e) {
@@ -200,6 +202,20 @@ namespace WindowsFormsApplication2.AreaRunner.InputScript {
                 AvailableInput.MouseMove(input);
                 timer.Stop();
                 TimerTick(sender, e);
+                return;
+            }
+            if (IsPart(func)) {
+                var scriptAction = (Func<object>)func;
+                var nextFunc = scriptAction();
+                if (nextFunc==null) {
+                    timer.Stop();
+                    TimerTick(sender, e);
+                    return;
+                }
+                FOR_INTERNAL_USE_ONLY fOR_INTERNAL_USE_ONLY = new FOR_INTERNAL_USE_ONLY(nextFunc);
+                timer.Stop();
+                fOR_INTERNAL_USE_ONLY.Completed = (s, args) => TimerTick(timer, null);
+                fOR_INTERNAL_USE_ONLY.Run();
                 return;
             }
             Stop(timer);

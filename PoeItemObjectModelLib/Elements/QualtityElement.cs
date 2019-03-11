@@ -10,9 +10,14 @@ namespace PoeItemObjectModelLib {
             try {
                 var split = Regex.Split(data, Environment.NewLine);
                 var targetLine = split.Where(a => a.Contains("Quality")).FirstOrDefault();
-                var targetValue = targetLine.Replace("% (augmented)", string.Empty).Replace("Quality: +",
-                    string.Empty);
-                Quality = int.Parse(targetValue);
+                if (targetLine == null) {
+                    Quality = 0;
+                }
+                else {
+                    var targetValue = targetLine.Replace("% (augmented)", string.Empty).Replace("Quality: +",
+                        string.Empty);
+                    Quality = int.Parse(targetValue);
+                }
             }
             catch (Exception) {
             }

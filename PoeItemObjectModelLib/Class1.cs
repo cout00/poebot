@@ -177,7 +177,11 @@ namespace PoeItemObjectModelLib {
             try {
                 if (Clipboard.ContainsText()) {
                     var text = Clipboard.GetText();
+                    Clipboard.Clear();
                     var elements = Regex.Split(text, "--------").RemoveEmpty().ToList();
+                    if (elements.Count<=2) {
+                        return null;
+                    }
                     var itemHeader = new ItemHeaderElement().ParseElement(elements.FirstOrDefault());
                     var itemSize =new ItemSizeElement().ParseElement(itemHeader.BaseName);
                     var itemStatus=new ItemElementParser().ParseElement(elements.Last());

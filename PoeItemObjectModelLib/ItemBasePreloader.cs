@@ -18,7 +18,7 @@ namespace PoeItemObjectModelLib {
 
         public static void Load() {
             loaded = true;
-            XmlSerializer ser = new XmlSerializer(typeof(List<PoePreloadedItem>));
+            XmlSerializer ser = XmlSerializer.FromTypes(new[] { typeof(List<PoePreloadedItem>) })[0];
             FileStream fs = new FileStream("XmlResource.xml", FileMode.Open);
             var result = ((List<PoePreloadedItem>)ser.Deserialize(fs));
             fs.Close();

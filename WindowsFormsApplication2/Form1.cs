@@ -125,5 +125,11 @@ namespace WindowsFormsApplication2 {
             lootProcessor2.bgrMax = new Bgr(int.Parse(BMax.Text), int.Parse(GMax.Text), int.Parse(RMax.Text));
             pictureBox1.Image = e.ImageProcessorResult.ResultBitmap;
         }
+
+        private void button3_Click(object sender, EventArgs e) {
+            NativeApiWrapper.InitGameInstance(comboBox1.SelectedItem as System.Diagnostics.Process);
+            TradeScript tradeScript = new TradeScript();
+            tradeScript.Run();
+        }
     }
 }

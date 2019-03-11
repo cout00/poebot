@@ -19,7 +19,7 @@ namespace PoeItemObjectModelLib.PickitEngine {
                 StatisticProcessor.Add(item);
                 return Pickit.IsValid(item);
             }
-            return true;
+            return false;
         }
 
     }

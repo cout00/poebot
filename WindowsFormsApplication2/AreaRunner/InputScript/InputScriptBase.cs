@@ -81,6 +81,8 @@ namespace WindowsFormsApplication2.AreaRunner.InputScript {
 
             public void DoScriptPart(Func<object> inputPart, double afterDelay = MODIFIER) {
                 DoDelay(() => afterDelay);
+                if(inputPart==null)
+                    return;                
                 var someFunc = inputPart();
                 FOR_INTERNAL_USE_ONLY fOR_INTERNAL_USE_ONLY = new FOR_INTERNAL_USE_ONLY(someFunc);
                 DoScript(() => fOR_INTERNAL_USE_ONLY);

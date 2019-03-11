@@ -7,9 +7,11 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using WindowsFormsApplication2.Native;
 
+using PoeItemObjectModelLib.PickitEngine;
+
 namespace WindowsFormsApplication2.AreaRunner.InputScript {
 
-    public class ReturnToHideoutScript : InputScriptBase {
+    public class ReturnToHideoutScript :InputScriptBase {
         protected override Script StartRecord() {
             var script = new Script();
             script.DoInput(() => {
@@ -23,7 +25,7 @@ namespace WindowsFormsApplication2.AreaRunner.InputScript {
     }
 
 
-    public class GameRunScript : InputScriptBase {
+    public class GameRunScript :InputScriptBase {
         protected override Script StartRecord() {
             var script = new Script();
             script.DoDelay(() => 100);
@@ -46,7 +48,7 @@ namespace WindowsFormsApplication2.AreaRunner.InputScript {
     }
 
 
-    public class UpGemsScript : InputScriptBase {
+    public class UpGemsScript :InputScriptBase {
         protected override Script StartRecord() {
             var script = new Script();
             script.DoDelay(() => {
@@ -64,12 +66,12 @@ namespace WindowsFormsApplication2.AreaRunner.InputScript {
         }
     }
 
-    public class OpenGameWorldMapImmediately : InputScriptBase {
+    public class OpenGameWorldMapImmediately :InputScriptBase {
         protected override Script StartRecord() {
             var script = new Script();
             script.DoDelay(() => 10);
-            if (Settings.UpGems) 
-                script.DoScript(() => new UpGemsScript());            
+            if (Settings.UpGems)
+                script.DoScript(() => new UpGemsScript());
             script.DoMouseMoveWithClick(() => {
                 return new Point(397, 302);
             });
@@ -81,7 +83,7 @@ namespace WindowsFormsApplication2.AreaRunner.InputScript {
 
 
 
-    public class RelogScript : InputScriptBase {
+    public class RelogScript :InputScriptBase {
         protected override Script StartRecord() {
             var script = new Script();
             script.DoInput(() => InputCodes.Escape);
@@ -92,7 +94,7 @@ namespace WindowsFormsApplication2.AreaRunner.InputScript {
         }
     }
 
-    public class ResetAuraSkills : InputScriptBase {
+    public class ResetAuraSkills :InputScriptBase {
         protected override Script StartRecord() {
             var script = new Script();
             script.DoInput(() => Settings.Skill7, 4);
@@ -101,7 +103,7 @@ namespace WindowsFormsApplication2.AreaRunner.InputScript {
         }
     }
 
-    public class StartAqueducScript : InputScriptBase {
+    public class StartAqueducScript :InputScriptBase {
         protected override Script StartRecord() {
             var script = new Script();
             script.DoMouseMoveWithClick(() => new Point(149, 217), 10);
@@ -115,7 +117,7 @@ namespace WindowsFormsApplication2.AreaRunner.InputScript {
         }
     }
 
-    public class AqueductNewAreaFromNineAct : InputScriptBase {
+    public class AqueductNewAreaFromNineAct :InputScriptBase {
         protected override Script StartRecord() {
             var script = new Script();
             script.DoScript(() => new AqueductNewAreaBase(), 10);
@@ -123,7 +125,7 @@ namespace WindowsFormsApplication2.AreaRunner.InputScript {
         }
     }
 
-    public class AqueductNewAreFromTenAct : InputScriptBase {
+    public class AqueductNewAreFromTenAct :InputScriptBase {
         protected override Script StartRecord() {
             var script = new Script();
             script.DoMouseMoveWithClick(() => new Point(224, 116), 30);
@@ -132,7 +134,7 @@ namespace WindowsFormsApplication2.AreaRunner.InputScript {
         }
     }
 
-    public class AqueductNewAreaBase : InputScriptBase {
+    public class AqueductNewAreaBase :InputScriptBase {
         protected override Script StartRecord() {
             var script = new Script();
             script.DoMouseMove(() => new System.Drawing.Point(155, 316));
@@ -144,21 +146,21 @@ namespace WindowsFormsApplication2.AreaRunner.InputScript {
     }
 
 
-    public class HideoutTradeScript : InputScriptBase {
+    public class HideoutTradeScript :InputScriptBase {
 
         protected override void DoRecord(Script script) {
             script.DoMouseMoveWithClick(() => new Point(428, 164), 10);
             script.DoMouseMoveWithClick(() => new Point(400, 166), 10);
             script.DoScript(() => new TradeScript(), 6);
             script.DoMouseMoveWithClick(() => new Point(220, 317), 10);
-            script.DoScript(() => new PutAllItems());            
+            script.DoScript(() => new PutAllItems());
             script.DoInput(() => InputCodes.Escape, 10);
             script.DoMouseMove(() => new Point(520, 324), 5);
             script.DoInput(() => Settings.MoveKey, 2);
         }
     }
 
-    class PutAllItems:InputScriptBase {
+    class PutAllItems :InputScriptBase {
 
         protected override void DoRecord(Script script) {
             int step = 30;
@@ -176,16 +178,14 @@ namespace WindowsFormsApplication2.AreaRunner.InputScript {
                         return capturedPoints.Dequeue();
                     }, 0.1);
                     script.DoScriptPart(() => {
-                        if (true) {
-                            return (Func<KeyWithModifier>)(() => new KeyWithModifier() { Key = InputCodes.LButton, Modifier = InputCodes.LControlKey });
-                        }
+                        return (Func<KeyWithModifier>)(() => new KeyWithModifier() { Key = InputCodes.LButton, Modifier = InputCodes.LControlKey });
                     }, 0.1);
                 }
-            }            
+            }
         }
     }
 
-    class TradeScript:InputScriptBase {
+    class TradeScript :InputScriptBase {
 
         protected override void DoRecord(Script script) {
             int step = 30;
@@ -202,24 +202,25 @@ namespace WindowsFormsApplication2.AreaRunner.InputScript {
                     script.DoMouseMove(() => {
                         return capturedPoints.Dequeue();
                     }, 0.1);
+                    script.DoInputWithModifiers(() => Ctrl_C, 0.1);
                     script.DoScriptPart(() => {
-                        if (true) {
+                        if (TempPickit.Validate()) {
                             return (Func<KeyWithModifier>)(() => new KeyWithModifier() { Key = InputCodes.LButton, Modifier = InputCodes.LControlKey });
                         }
+                        return null;
                     }, 0.1);
                 }
             }
             script.DoMouseMove(() => new Point(75, 486), 3);
             if (Settings.IS_DEBUG_SELLING) {
                 script.DoInput(() => InputCodes.Escape, 10);
-            }
-            else {
+            } else {
                 script.DoInput(() => InputCodes.LButton, 10);
             }
         }
     }
 
-    public class AqueductNewAreaScriptFromAriat : InputScriptBase {
+    public class AqueductNewAreaScriptFromAriat :InputScriptBase {
         protected override Script StartRecord() {
             var script = new Script();
             script.DoMouseMoveWithClick(() => new System.Drawing.Point(184, 97));
@@ -229,7 +230,7 @@ namespace WindowsFormsApplication2.AreaRunner.InputScript {
         }
     }
 
-    class ZanaTradeScript : InputScriptBase {
+    class ZanaTradeScript :InputScriptBase {
         protected override Script StartRecord() {
             int step = 30;
             int startX = 455;
@@ -260,7 +261,7 @@ namespace WindowsFormsApplication2.AreaRunner.InputScript {
         }
     }
 
-    public class HideoutAreaScript : InputScriptBase {
+    public class HideoutAreaScript :InputScriptBase {
         protected override Script StartRecord() {
             var script = new Script();
 

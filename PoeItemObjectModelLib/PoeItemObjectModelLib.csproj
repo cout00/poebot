@@ -52,6 +52,8 @@
     <Compile Include="Elements\IElementParser.cs" />
     <Compile Include="ItemBasePreloader.cs" />
     <Compile Include="ItemClassEvualator.cs" />
+    <Compile Include="PickitEngine\PickitStatistic\ItemStatisticInfo.cs" />
+    <Compile Include="PickitEngine\TempPickit.cs" />
     <Compile Include="PoePreloadedItem3.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Elements\QualtityElement.cs" />

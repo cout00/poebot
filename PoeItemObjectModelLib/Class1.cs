@@ -133,6 +133,15 @@ namespace PoeItemObjectModelLib {
             divCardFilter.ItemClassEvualator.Elements.Add(divCardHeader);
             divCardFilter.ItemClassEvualator.IsActive = true;
 
+
+            PickitFilter mapPickitFilter = new PickitFilter();
+            mapPickitFilter.Destination = Destination.Keep;
+            mapPickitFilter.RarityEvualator.IsActive = false;
+            ItemHeaderElement mapHeader = new ItemHeaderElement();
+            mapHeader.Class = ItemClass.DivinationCard;
+            mapPickitFilter.ItemClassEvualator.Elements.Add(mapHeader);
+            mapPickitFilter.ItemClassEvualator.IsActive = true;
+
             PickitFilter uniqueItemFilter=new PickitFilter();
             uniqueItemFilter.Destination=Destination.Keep;
             uniqueItemFilter.RarityEvualator.IsActive = true;
@@ -150,6 +159,7 @@ namespace PoeItemObjectModelLib {
             PickitFilters.Add(divCardFilter);
             PickitFilters.Add(uniqueItemFilter);
             PickitFilters.Add(currencyItemFilter);
+            PickitFilters.Add(mapPickitFilter);
         }
 
         public bool IsValid(IItem item) {
@@ -228,8 +238,8 @@ namespace PoeItemObjectModelLib {
                     return null;
                 }
             }
-            catch (Exception e) {
-                throw e;
+            catch {
+                return null;
             }
         }
     }

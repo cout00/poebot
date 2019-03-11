@@ -14,6 +14,9 @@ using System.Text;
 using System.Threading.Tasks;
 using WindowsFormsApplication2.AreaRunner.InputScript;
 using WindowsFormsApplication2.Parsers;
+
+using PoeItemObjectModelLib;
+
 using static WindowsFormsApplication2.Native.NativeAPI;
 
 namespace WindowsFormsApplication2.Native {
@@ -64,6 +67,7 @@ namespace WindowsFormsApplication2.Native {
                 throw new Exception($"Process not found {GameProcessName}");
             if (processes.Count() > 1)
                 throw new NotSupportedException($"only 1 instance of {GameProcessName}");
+            ItemBasePreloader.Load();
             var process = processes.FirstOrDefault();
             GameMainWindowHandle = process.MainWindowHandle;
             var processSharp = new ProcessSharp(process, MemoryType.Remote);
@@ -72,6 +76,7 @@ namespace WindowsFormsApplication2.Native {
         }
 
         public static void InitGameInstance(System.Diagnostics.Process process) {
+            ItemBasePreloader.Load();
             GameMainWindowHandle = process.MainWindowHandle;
             var processSharp = new ProcessSharp(process, MemoryType.Remote);
             GameWindow = processSharp.WindowFactory.MainWindow;

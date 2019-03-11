@@ -163,6 +163,9 @@
     <Content Include="Resources\MAP_MARKER_TEMPLATE.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="XmlResource.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PoeItemObjectModelLib\PoeItemObjectModelLib.csproj">

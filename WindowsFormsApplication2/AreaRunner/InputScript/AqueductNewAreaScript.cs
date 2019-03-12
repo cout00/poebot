@@ -201,8 +201,8 @@ namespace WindowsFormsApplication2.AreaRunner.InputScript {
                     capturedPoints.Enqueue(new Point(X, Y));
                     script.DoMouseMove(() => {
                         return capturedPoints.Dequeue();
-                    }, 0.2);
-                    script.DoInputWithModifiers(() => Ctrl_C, 0.2);
+                    }, 0.1);
+                    script.DoInputWithModifiers(() => Ctrl_C, 0.1);
                     script.DoScriptPart(() => {
                         if (!TempPickit.Validate()) {
                             Console.WriteLine("not valid");

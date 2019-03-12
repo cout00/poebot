@@ -46,6 +46,7 @@ namespace PoeItemObjectModelLib {
         public RarityEvualator RarityEvualator { get; }
         public ItemClassEvualator ItemClassEvualator { get; }
         public SpecificUniqueItemEvualator SpecificUniqueItemEvualator { get; }
+        public QuantityEvualator QuantityEvualator { get; }
 
         ICollection<IEvualator> Evualators = new List<IEvualator>();
 
@@ -53,10 +54,11 @@ namespace PoeItemObjectModelLib {
             RarityEvualator = new RarityEvualator();
             ItemClassEvualator = new ItemClassEvualator();
             SpecificUniqueItemEvualator = new SpecificUniqueItemEvualator();
-
+            QuantityEvualator = new QuantityEvualator();
             Evualators.Add(RarityEvualator);
             Evualators.Add(ItemClassEvualator);
             Evualators.Add(SpecificUniqueItemEvualator);
+            Evualators.Add(QuantityEvualator);
         }
 
         bool IEvualator.Evualate(IItem item) {
@@ -138,7 +140,7 @@ namespace PoeItemObjectModelLib {
             mapPickitFilter.Destination = Destination.Keep;
             mapPickitFilter.RarityEvualator.IsActive = false;
             ItemHeaderElement mapHeader = new ItemHeaderElement();
-            mapHeader.Class = ItemClass.DivinationCard;
+            mapHeader.Class = ItemClass.Map;
             mapPickitFilter.ItemClassEvualator.Elements.Add(mapHeader);
             mapPickitFilter.ItemClassEvualator.IsActive = true;
 
@@ -156,10 +158,27 @@ namespace PoeItemObjectModelLib {
             currencyElement.Rarity = ItemRarity.Currency;
             currencyItemFilter.RarityEvualator.Elements.Add(currencyElement);
 
+            PickitFilter qualityGemPickit = new PickitFilter();
+            qualityGemPickit.Destination = Destination.Keep;
+            qualityGemPickit.QuantityEvualator.IsActive = true;
+            qualityGemPickit.ItemClassEvualator.IsActive = true;
+            ItemHeaderElement qualitySupportSkillGem = new ItemHeaderElement();
+            qualitySupportSkillGem.Class = ItemClass.Support_Skill_Gem;
+            ItemHeaderElement activeSkillGem = new ItemHeaderElement();
+            activeSkillGem.Class = ItemClass.Active_Skill_Gem;
+
+            qualityGemPickit.RarityEvualator.Elements.Add(qualitySupportSkillGem);
+            qualityGemPickit.RarityEvualator.Elements.Add(activeSkillGem);
+            var qualityList = Enumerable.Range(5, 16).Select(a => new QualtityElement() { Quality = a });
+            foreach (var qualtityElement in qualityList) {
+                qualityGemPickit.QuantityEvualator.Elements.Add (qualtityElement);
+            }
+
             PickitFilters.Add(divCardFilter);
             PickitFilters.Add(uniqueItemFilter);
             PickitFilters.Add(currencyItemFilter);
             PickitFilters.Add(mapPickitFilter);
+            PickitFilters.Add(qualityGemPickit);
         }
 
         public bool IsValid(IItem item) {
@@ -173,18 +192,39 @@ namespace PoeItemObjectModelLib {
 
     public class ItemFactory {
 
+        string GetClipboardText() {
+            string strClipboard = string.Empty;
+
+            for (int i = 0; i < 10; i++) {
+                try {
+                    strClipboard = Clipboard.GetText(TextDataFormat.UnicodeText);
+                    return strClipboard;
+                }
+                catch (System.Runtime.InteropServices.COMException ex) {
+                    if (ex.ErrorCode == -2147221040)
+                        System.Threading.Thread.Sleep(10);
+                    else
+                        throw new Exception("Unable to get Clipboard text.");
+                }
+            }
+
+            return strClipboard;
+        }
+
+
+
         public IItem GetModel() {
             try {
                 if (Clipboard.ContainsText()) {
-                    var text = Clipboard.GetText();
+                    var text = GetClipboardText();
                     Clipboard.Clear();
                     var elements = Regex.Split(text, "--------").RemoveEmpty().ToList();
                     if (elements.Count<=2) {
                         return null;
                     }
-                    var itemHeader = new ItemHeaderElement().ParseElement(elements.FirstOrDefault());
-                    var itemSize =new ItemSizeElement().ParseElement(itemHeader.BaseName);
                     var itemStatus=new ItemElementParser().ParseElement(elements.Last());
+                    var itemHeader = new ItemHeaderElement(itemStatus.Status).ParseElement(elements.FirstOrDefault());
+                    var itemSize =new ItemSizeElement().ParseElement(itemHeader.BaseName);
                     if (itemHeader.Class == ItemClass.Currency) {
                         var stackedItemElement = new StackedItemElement().ParseElement(elements[1]);
                         return new Currency()

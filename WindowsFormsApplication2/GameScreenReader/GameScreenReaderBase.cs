@@ -26,7 +26,7 @@ namespace WindowsFormsApplication2.GameScreenReader {
 
         public Point ClientPointToWindowPoint(Point point) {
             var localgamerect = GetGameWindowBounds();
-            return new Point(point.X + localgamerect.Left, point.Y + localgamerect.Top + 25);
+            return new Point(point.X + localgamerect.Left+25, point.Y + localgamerect.Top + 35);
         }
 
         public Point PlayerCord {

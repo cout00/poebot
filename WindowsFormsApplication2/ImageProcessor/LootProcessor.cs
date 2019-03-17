@@ -65,15 +65,14 @@ namespace WindowsFormsApplication2.ImageProcessor {
             Image<Bgr, byte> image = new Image<Bgr, byte>(processImage);
             //var range = image.InRange(bgrMin, bgrMax).Dilate(1).SmoothMedian(5).SmoothMedian(5);
             var green = image.InRange(new Bgr(20, 220, 0), new Bgr(40, 255, 255)).Dilate(8).SmoothMedian(5).SmoothMedian(5);
-           //var range = image.InRange(bgrMin, bgrMax).Dilate(1).SmoothMedian(5).SmoothMedian(5);
-            var endPointRange = image.InRange(new Bgr(180, 0, 180), new Bgr(220, 30, 220)).Dilate(1).SmoothMedian(5).SmoothMedian(5);
-
+            //var range = image.InRange(bgrMin, bgrMax).Dilate(1).SmoothMedian(5).SmoothMedian(5);
+            var endPointRange = image.InRange(new Bgr(180, 0, 220), new Bgr(255, 40, 255)).Dilate(1).SmoothMedian(5).SmoothMedian(5);            
             var mapMarkers = image.InRange(new Bgr(0, 0, 0), new Bgr(1, 1, 1)).Dilate(1).SmoothMedian(5).SmoothMedian(5);
             var markers = GetMarkers(mapMarkers, green);
             List<LootMoveResult> moveInfos = new List<LootMoveResult>();
+            var endPoints = GetCountours(endPointRange);
 
-            if (markers.Any()) {
-                var endPoints = GetCountours(endPointRange);
+            if (markers.Any()  || endPoints.Any()) {
                 if (endPoints.Any()) {
                     foreach (var endpoint in endPoints) {
                         var moments = CvInvoke.Moments(endpoint);
@@ -81,15 +80,15 @@ namespace WindowsFormsApplication2.ImageProcessor {
                         centerMoveInfo.LootCord = reader.ClientPointToWindowPoint(centerMoveInfo.Vector[1]);
                         centerMoveInfo.IsLootEndPoint = true;
                         moveInfos.Add(centerMoveInfo);
-                        //CvInvoke.Line(range, centerMoveInfo.Vector[0], centerMoveInfo.Vector[1], new MCvScalar(255));
+                        //CvInvoke.Line(mapMarkers, centerMoveInfo.Vector[0], centerMoveInfo.Vector[1], new MCvScalar(255));
                     }
                 }
                 else {
                     foreach (var marker in markers) {
                         var moments = CvInvoke.Moments(marker);
                         var centerMoveInfo = PointToMoveInfo<LootMoveResult>(new Point((int)(moments.M10 / moments.M00), (int)(moments.M01 / moments.M00)));
-                        CvInvoke.Line(mapMarkers, centerMoveInfo.Vector[0], centerMoveInfo.Vector[1], new MCvScalar(255));
-                        CvInvoke.PutText(mapMarkers, CvInvoke.ContourArea(marker).ToString(), centerMoveInfo.Vector[1], FontFace.HersheyComplex, 1, new MCvScalar(255));
+                        //CvInvoke.Line(mapMarkers, centerMoveInfo.Vector[0], centerMoveInfo.Vector[1], new MCvScalar(255));
+                        //CvInvoke.PutText(mapMarkers, CvInvoke.ContourArea(marker).ToString(), centerMoveInfo.Vector[1], FontFace.HersheyComplex, 1, new MCvScalar(255));
                         centerMoveInfo.IsLootEndPoint = false;
                         moveInfos.Add(centerMoveInfo);
                     }
@@ -105,34 +104,4 @@ namespace WindowsFormsApplication2.ImageProcessor {
         }
     }
 
-
-
-    public class LootProcessor : ImageProcessorBase<LootScreenReader, GameMapProcessorResult<LootMoveResult>>, ISupportLock {
-
-        public bool Locked { get; set; }
-
-        protected override int Delay => NativeApiWrapper.StandartDelay;
-
-        protected override GameMapProcessorResult<LootMoveResult> DoWhenTicket(Bitmap processImage) {
-            Locked = true;
-            Image<Bgr, byte> image = new Image<Bgr, byte>(processImage);
-            var range = image.InRange(new Bgr(180, 0, 180), new Bgr(220, 30, 220)).Dilate(1).SmoothMedian(5).SmoothMedian(5);
-            VectorOfVectorOfPoint vectorOfVectorOfPoint = new VectorOfVectorOfPoint();
-            IOutputArray hirarchy = null;
-            List<LootMoveResult> moveInfos = new List<LootMoveResult>();
-            CvInvoke.FindContours(range, vectorOfVectorOfPoint, hirarchy, RetrType.List, ChainApproxMethod.ChainApproxTc89Kcos);
-            for (int i = 0; i < vectorOfVectorOfPoint.Size; i++) {
-                if (CvInvoke.ContourArea(vectorOfVectorOfPoint[i]) < 25)
-                    continue;
-                var moments = CvInvoke.Moments(vectorOfVectorOfPoint[i]);
-                var centerMoveInfo = PointToMoveInfo<LootMoveResult>(new Point((int)(moments.M10 / moments.M00), (int)(moments.M01 / moments.M00)));
-                centerMoveInfo.LootCord = reader.ClientPointToWindowPoint(centerMoveInfo.Vector[1]);
-                centerMoveInfo.IsLootEndPoint = true;
-                moveInfos.Add(centerMoveInfo);
-                CvInvoke.Line(range, centerMoveInfo.Vector[0], centerMoveInfo.Vector[1], new MCvScalar(255));
-            }
-            Locked = moveInfos.Any();
-            return new GameMapProcessorResult<LootMoveResult>() { ResultBitmap = range.ToBitmap(), VectorizationResult = moveInfos };
-        }
-    }
 }

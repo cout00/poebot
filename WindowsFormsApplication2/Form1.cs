@@ -101,6 +101,7 @@ namespace WindowsFormsApplication2 {
         private void button1_Click_1(object sender, EventArgs e) {
             AqueducProfile aqueducProfile = new AqueducProfile();
             aqueducProfile.Settings.Act = 9;
+            aqueducProfile.Settings.MaxRunCountBeforeSellItems = 4;
             aqueducProfile.RunSafe(comboBox1.SelectedItem as System.Diagnostics.Process);
         }
 

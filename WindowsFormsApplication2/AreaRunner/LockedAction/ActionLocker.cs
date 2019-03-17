@@ -10,11 +10,11 @@ using WindowsFormsApplication2.Native;
 
 namespace WindowsFormsApplication2.AreaRunner.LockedAction {
 
-    public static class ActionLockedExtensions {
-        public static void Wait(this ActionLockerFactory self, int ms) {
-            self.Execute(new ActionWaitParameter() { Interval = ms }, typeof(ActionWait));
-        }
-    }
+    //public static class ActionLockedExtensions {
+    //    public static void Wait(this ActionLockerFactory self, int ms) {
+    //        self.Execute(new ActionWaitParameter() { Interval = ms }, typeof(ActionWait));
+    //    }
+    //}
 
     public class LockObserver {
 
@@ -32,79 +32,79 @@ namespace WindowsFormsApplication2.AreaRunner.LockedAction {
 
     }
 
-    public class ActionLockerFactory : ISupportLock {
-        static ActionLockerFactory factory;
+    //public class ActionLockerFactory : ISupportLock {
+    //    static ActionLockerFactory factory;
 
-        public static ActionLockerFactory GetFactory() {
-            return factory;
-        }
+    //    public static ActionLockerFactory GetFactory() {
+    //        return factory;
+    //    }
 
-        class ActionInfo {
-            public Task ExecuteTask { get; set; }
-            public ISupportLock Locker { get; set; }
-        }
+    //    class ActionInfo {
+    //        public Task ExecuteTask { get; set; }
+    //        public ISupportLock Locker { get; set; }
+    //    }
 
-        private readonly ConcurrentQueue<Func<Task>> _processingQueue = new ConcurrentQueue<Func<Task>>();
-        private readonly ConcurrentDictionary<int, Task> _runningTasks = new ConcurrentDictionary<int, Task>();
-        private readonly ILogger logger;
-        private TaskCompletionSource<bool> _tscQueue = new TaskCompletionSource<bool>();
+    //    private readonly ConcurrentQueue<Func<Task>> _processingQueue = new ConcurrentQueue<Func<Task>>();
+    //    private readonly ConcurrentDictionary<int, Task> _runningTasks = new ConcurrentDictionary<int, Task>();
+    //    private readonly ILogger logger;
+    //    private TaskCompletionSource<bool> _tscQueue = new TaskCompletionSource<bool>();
 
-        public ActionLockerFactory(ILogger logger) {
-            factory = this;
-            this.logger = logger;
-        }
+    //    public ActionLockerFactory(ILogger logger) {
+    //        factory = this;
+    //        this.logger = logger;
+    //    }
 
-        public void Queue(Func<Task> futureTask) {
-            _processingQueue.Enqueue(futureTask);
-        }
+    //    public void Queue(Func<Task> futureTask) {
+    //        _processingQueue.Enqueue(futureTask);
+    //    }
 
-        async Task Process() {
-            var t = _tscQueue.Task;
-            StartTasks();
-            await t;
-        }
+    //    async Task Process() {
+    //        var t = _tscQueue.Task;
+    //        StartTasks();
+    //        await t;
+    //    }
 
-        public void ProcessBackground(Action<Exception> exception = null) {
-            Locked = true;
-            Task.Run(Process).ContinueWith(t => {
-                exception?.Invoke(t.Exception);
-            }, TaskContinuationOptions.OnlyOnFaulted);
-        }
+    //    public void ProcessBackground(Action<Exception> exception = null) {
+    //        Locked = true;
+    //        Task.Run(Process).ContinueWith(t => {
+    //            exception?.Invoke(t.Exception);
+    //        }, TaskContinuationOptions.OnlyOnFaulted);
+    //    }
 
-        void StartTasks() {
-            Func<Task> futureTask;
-            if (!_processingQueue.TryDequeue(out futureTask)) {
-                Locked = false;
-                return;
-            }
+    //    void StartTasks() {
+    //        Func<Task> futureTask;
+    //        if (!_processingQueue.TryDequeue(out futureTask)) {
+    //            Locked = false;
+    //            return;
+    //        }
 
-            var t = Task.Run(futureTask);
-            logger.WriteLog("started " + t.Id.ToString());
-            _runningTasks.TryAdd(t.GetHashCode(), t);
-            t.ContinueWith((t2) => {
-                Task _temp;
-                _runningTasks.TryRemove(t2.GetHashCode(), out _temp);
-                logger.WriteLog("ended " + _temp.Id.ToString());
-                StartTasks();
-            });
+    //        var t = Task.Run(futureTask);
+    //        logger.WriteLog("started " + t.Id.ToString());
+    //        _runningTasks.TryAdd(t.GetHashCode(), t);
+    //        t.ContinueWith((t2) => {
+    //            Task _temp;
+    //            _runningTasks.TryRemove(t2.GetHashCode(), out _temp);
+    //            logger.WriteLog("ended " + _temp.Id.ToString());
+    //            StartTasks();
+    //        });
 
-            if (_processingQueue.IsEmpty && _runningTasks.IsEmpty) {
-                var _oldQueue = Interlocked.Exchange(
-                    ref _tscQueue, new TaskCompletionSource<bool>());
-                _oldQueue.TrySetResult(true);
-            }
-        }
+    //        if (_processingQueue.IsEmpty && _runningTasks.IsEmpty) {
+    //            var _oldQueue = Interlocked.Exchange(
+    //                ref _tscQueue, new TaskCompletionSource<bool>());
+    //            _oldQueue.TrySetResult(true);
+    //        }
+    //    }
 
-        public bool Locked { get; set; }
+    //    public bool Locked { get; set; }
 
-        public void Execute<TParam>(TParam param, Type lockedActionType) where TParam : LockedActionParam, new() {
-            ILockedAction<TParam> lockedAction = (ILockedAction<TParam>)Activator.CreateInstance(lockedActionType);
-            var task = lockedAction.DoLockedAction(param);
-            _processingQueue.Enqueue(task);
-            if (!Locked) {
-                ProcessBackground();
-            }
-        }
+    //    public void Execute<TParam>(TParam param, Type lockedActionType) where TParam : LockedActionParam, new() {
+    //        ILockedAction<TParam> lockedAction = (ILockedAction<TParam>)Activator.CreateInstance(lockedActionType);
+    //        var task = lockedAction.DoLockedAction(param);
+    //        _processingQueue.Enqueue(task);
+    //        if (!Locked) {
+    //            ProcessBackground();
+    //        }
+    //    }
 
-    }
+    //}
 }

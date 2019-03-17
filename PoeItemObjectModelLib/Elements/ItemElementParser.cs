@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 namespace PoeItemObjectModelLib.Elements {
     class ItemElementParser :IItem, IElementParser<IItem> {
         public ItemStatus Status { get; set; }
+        public int StashTab { get; set; } = 1;
 
         void ParseItemStatus(string rawData) {
             if (Regex.Match(rawData, ItemStatus.Corrupted.ToString()).Value != string.Empty) {

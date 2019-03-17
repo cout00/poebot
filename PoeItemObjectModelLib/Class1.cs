@@ -201,6 +201,7 @@ namespace PoeItemObjectModelLib {
                     return strClipboard;
                 }
                 catch (System.Runtime.InteropServices.COMException ex) {
+                    Console.WriteLine(ex.Message);
                     if (ex.ErrorCode == -2147221040)
                         System.Threading.Thread.Sleep(10);
                     else
@@ -217,6 +218,8 @@ namespace PoeItemObjectModelLib {
             try {
                 if (Clipboard.ContainsText()) {
                     var text = GetClipboardText();
+                    Console.WriteLine(text);
+                    Console.WriteLine("*************************************");
                     Clipboard.Clear();
                     var elements = Regex.Split(text, "--------").RemoveEmpty().ToList();
                     if (elements.Count<=2) {
@@ -227,6 +230,7 @@ namespace PoeItemObjectModelLib {
                     var itemSize =new ItemSizeElement().ParseElement(itemHeader.BaseName);
                     if (itemHeader.Class == ItemClass.Currency) {
                         var stackedItemElement = new StackedItemElement().ParseElement(elements[1]);
+                        itemStatus.StashTab = 2;
                         return new Currency()
                             .Assign(stackedItemElement)
                             .Assign(itemHeader)
@@ -234,6 +238,7 @@ namespace PoeItemObjectModelLib {
                             .Assign(itemStatus);
                     }
                     if (itemHeader.Class == ItemClass.DivinationCard) {
+                        itemStatus.StashTab = 2;
                         var stackedItemElement = new StackedItemElement().ParseElement(elements[1]);
                         return new DivinationCard()
                             .Assign(stackedItemElement)
@@ -242,6 +247,7 @@ namespace PoeItemObjectModelLib {
                             .Assign(itemStatus);
                     }
                     if (itemHeader.Class.IsGem()) {
+                        itemStatus.StashTab = 2;
                         var qualityElement = new QualtityElement().ParseElement(elements[1]);
                         return new Gem()
                             .Assign(qualityElement)
@@ -250,6 +256,7 @@ namespace PoeItemObjectModelLib {
                             .Assign(itemStatus);
                     }
                     if (itemHeader.Class.IsArmor()) {
+                        itemStatus.StashTab = 3;
                         var qualityElement = new QualtityElement().ParseElement(elements[1]);
                         var socketedElement = new SocketedItemElement().ParseElement(elements[3]);
                         return new Armor()
@@ -261,6 +268,7 @@ namespace PoeItemObjectModelLib {
                     }
 
                     if (itemHeader.Class.IsWeapon()) {
+                        itemStatus.StashTab = 3;
                         var qualityElement = new QualtityElement().ParseElement(elements[1]);
                         var socketedElement = new SocketedItemElement().ParseElement(elements[3]);
                         return new Weapons()
@@ -301,6 +309,7 @@ namespace PoeItemObjectModelLib {
         public int SizeY { get; set; }
 
         public ItemStatus Status { get; set; }
+        public int StashTab { get; set; } = 1;
 
         public ItemModel Assign<T>(T instance) where T : IElement {
             var interfaces = GetType().GetInterfaces().FirstOrDefault(a => a.FullName == typeof(T).FullName);
@@ -370,6 +379,7 @@ namespace PoeItemObjectModelLib {
 
     public interface IItem :IElement {
         ItemStatus Status { get; set; }
+        int StashTab { get; set; }
     }
 
     public interface IItemBaseHeader :IElement {

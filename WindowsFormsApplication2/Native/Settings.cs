@@ -46,8 +46,8 @@ namespace WindowsFormsApplication2.Native {
 
         public static int AttackDelay { get; } = 900;
         public static double GlobalScriptDelayModifier { get; } = 1;
-        public static bool UpGems { get; } = true;
-        public static bool IS_DEBUG_SELLING { get; } = true;
+        public static bool UpGems { get; } = false;
+        public static bool IS_DEBUG_SELLING { get; } = false;
 
     }
 }

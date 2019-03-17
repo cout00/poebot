@@ -121,6 +121,7 @@ namespace PoeItemObjectModelLib.PickitEngine.PickitStatistic {
 
     public class StatisticProcessor {
 
+
         public event EventHandler<StatisticProcessor> OnData; 
 
         public List<ItemStatisticInfo> AllItems = new List<ItemStatisticInfo>();

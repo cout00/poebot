@@ -17,7 +17,7 @@ namespace WindowsFormsApplication2.AreaRunner.InputScript {
             script.DoInput(() => {
                 Clipboard.SetText(HideoutCommand);
                 return InputCodes.Return;
-            }, 80);
+            }, 40);
             script.DoInputWithModifiers(() => Ctrl_V);
             script.DoInput(() => InputCodes.Return);
             return script;
@@ -162,6 +162,40 @@ namespace WindowsFormsApplication2.AreaRunner.InputScript {
 
     class PutAllItems :InputScriptBase {
 
+        class PutAllItemsTempScript:InputScriptBase {
+            readonly Point point;
+            readonly Point backPoint;
+
+            public PutAllItemsTempScript(Point stashTabPoint, Point backPoint) {
+                this.point = stashTabPoint;
+                this.backPoint = backPoint;
+            }
+
+            protected override void DoRecord(Script script) {
+                script.DoMouseMoveWithClick(() => point, 2);
+                script.DoMouseMove(() => backPoint, 2);
+                script.DoInputWithModifiers(() => CallNewInstanceWindow,2);
+            }
+        }
+
+
+        int lastStashTab = 1;
+        Point StashNumberToPoint(int number) {
+            if (number == 1) {
+                return new Point(135, 111);
+            }
+            if (number == 2) {
+                return new Point(167, 112);
+            }
+            if (number == 3) {
+                return new Point(202, 111);
+            }
+            if (number == 4) {
+                return new Point(236, 111);
+            }
+            return new Point(236, 111);
+        }
+
         protected override void DoRecord(Script script) {
             int step = 30;
             int startX = 455;
@@ -174,12 +208,24 @@ namespace WindowsFormsApplication2.AreaRunner.InputScript {
             for (int Y = starty; Y < endY; Y += step) {
                 for (int X = startX; X < endX; X += step) {
                     capturedPoints.Enqueue(new Point(X, Y));
+                    var lastPos = new Point();
                     script.DoMouseMove(() => {
-                        return capturedPoints.Dequeue();
+                        lastPos = capturedPoints.Dequeue();
+                        return lastPos;
                     }, 0.1);
+                    script.DoInputWithModifiers(() => Ctrl_C, 0.2);
                     script.DoScriptPart(() => {
-                        return (Func<KeyWithModifier>)(() => new KeyWithModifier() { Key = InputCodes.LButton, Modifier = InputCodes.LControlKey });
-                    }, 0.1);
+                        var item = TempPickit.Factory.GetModel();
+                        if (item==null) {
+                            return (Func<KeyWithModifier>)(() => CallNewInstanceWindow);
+                        }
+                        var itemStash = item.StashTab;
+                        if (itemStash == lastStashTab) {
+                            return (Func<KeyWithModifier>)(() => CallNewInstanceWindow);
+                        }
+                        lastStashTab = itemStash;
+                        return (Func<InputScriptBase>)(() => new PutAllItemsTempScript(StashNumberToPoint(itemStash), lastPos));
+                    }, 0.3);
                 }
             }
         }
@@ -202,15 +248,13 @@ namespace WindowsFormsApplication2.AreaRunner.InputScript {
                     script.DoMouseMove(() => {
                         return capturedPoints.Dequeue();
                     }, 0.1);
-                    script.DoInputWithModifiers(() => Ctrl_C, 0.1);
+                    script.DoInputWithModifiers(() => Ctrl_C, 0.4);
                     script.DoScriptPart(() => {
-                        if (!TempPickit.Validate()) {
-                            Console.WriteLine("not valid");
-                            return (Func<KeyWithModifier>)(() => new KeyWithModifier() { Key = InputCodes.LButton, Modifier = InputCodes.LControlKey });
+                        if (!TempPickit.Validate()) {                   
+                            return (Func<KeyWithModifier>)(() => CallNewInstanceWindow);
                         }
-                        Console.WriteLine("valid");
                         return null;
-                    }, 0.2);
+                    }, 0.5);
                 }
             }
             script.DoMouseMove(() => new Point(75, 486), 3);
@@ -228,60 +272,6 @@ namespace WindowsFormsApplication2.AreaRunner.InputScript {
             script.DoMouseMoveWithClick(() => new System.Drawing.Point(184, 97));
             script.DoMouseMoveWithClick(() => new System.Drawing.Point(223, 117));
             script.DoScript(() => new AqueductNewAreaBase());
-            return script;
-        }
-    }
-
-    class ZanaTradeScript :InputScriptBase {
-        protected override Script StartRecord() {
-            int step = 30;
-            int startX = 455;
-            int endX = 786;
-            int starty = 370;
-            int endY = 491;
-            var script = new Script();
-            script.DoDelay(() => 2500);
-            Queue<Point> capturedPoints = new Queue<Point>();
-
-            for (int Y = starty; Y < endY; Y += step) {
-                for (int X = startX; X < endX; X += step) {
-                    capturedPoints.Enqueue(new Point(X, Y));
-                    script.DoMouseMove(() => {
-                        return capturedPoints.Dequeue();
-                    });
-                    script.DoScriptPart(() => {
-                        if (true) {
-                            return (Func<KeyWithModifier>)(() => new KeyWithModifier() { Key = InputCodes.LButton, Modifier = InputCodes.LControlKey });
-                        }
-                    });
-                }
-            }
-
-
-
-            return script;
-        }
-    }
-
-    public class HideoutAreaScript :InputScriptBase {
-        protected override Script StartRecord() {
-            var script = new Script();
-
-            script.DoDelay(() => 2500);
-
-
-            script.DoMouseMoveWithClick(() => new System.Drawing.Point(230, 250)); //go to zana
-            script.DoDelay(() => 400); //do somewith chest
-            script.DoMouseMoveWithClick(() => new System.Drawing.Point(393, 190)); //open trade
-            script.DoDelay(() => 1200); // do with zana
-            script.DoInput(() => InputCodes.Escape); //close trade
-            script.DoInput(() => InputCodes.Escape); //close zana
-            script.DoMouseMoveWithClick(() => new System.Drawing.Point(579, 190)); //go to chest
-            script.DoDelay(() => 1200);
-            script.DoInput(() => InputCodes.Escape); //close chest
-            script.DoMouseMoveWithClick(() => new System.Drawing.Point(328, 433)); //go to way point
-            script.DoDelay(() => 400);
-            script.DoScript(() => new AqueductNewAreaScriptFromAriat());
             return script;
         }
     }

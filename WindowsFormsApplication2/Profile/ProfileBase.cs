@@ -77,11 +77,14 @@ namespace WindowsFormsApplication2.Profile {
         }
 
         void IGameLogListener.OnHideoutEntered(string hideout) {
-            runCount++;
             if (runCount == Settings.MaxRunCountBeforeSellItems) {
-                OnHideoutProcessed(hideout);
+                runCount = 0;
+                HideoutTradeScript hideoutTradeScript = new HideoutTradeScript();
+                hideoutTradeScript.DoAfter(() => OnHideoutProcessed(hideout));
+                hideoutTradeScript.Run();
             }
             else {
+                runCount++;
                 OnHideoutProcessed(hideout);
             }
         }

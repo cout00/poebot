@@ -325,7 +325,7 @@ namespace PoeItemObjectModelLib {
     }
 
     
-    class DivinationCard :ItemModel, IDivinationCard {
+    public class DivinationCard :ItemModel, IDivinationCard {
         public int MaxStackSize { get; set; }
         public int StackSize { get; set; }
     }

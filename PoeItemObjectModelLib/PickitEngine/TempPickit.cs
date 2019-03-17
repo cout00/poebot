@@ -16,7 +16,7 @@ namespace PoeItemObjectModelLib.PickitEngine {
         public static bool Validate() {
             var item = Factory.GetModel();
             if(item!=null) {
-                StatisticProcessor.Add(item);
+                StatisticProcessor.Add(item, Destination.Keep);
                 return Pickit.IsValid(item);
             }
             return false;

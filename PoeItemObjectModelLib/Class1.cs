@@ -173,7 +173,7 @@ namespace PoeItemObjectModelLib {
 
     public class ItemFactory {
 
-        public IItem GetModel() {
+        public ItemModel GetModel() {
             try {
                 if (Clipboard.ContainsText()) {
                     var text = Clipboard.GetText();
@@ -285,7 +285,7 @@ namespace PoeItemObjectModelLib {
     }
 
     
-    class DivinationCard :ItemModel, IDivinationCard {
+    public class DivinationCard :ItemModel, IDivinationCard {
         public int MaxStackSize { get; set; }
         public int StackSize { get; set; }
     }
@@ -300,7 +300,7 @@ namespace PoeItemObjectModelLib {
         public int SocketsCount { get; set; }
     }
 
-    class Weapons :ItemModel, IWeapon {
+    public class Weapons :ItemModel, IWeapon {
         public int Quality { get; set; }
 
         public int SocketsCount { get; set; }
